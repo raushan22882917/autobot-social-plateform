@@ -1,107 +1,49 @@
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# Build outputs
-.next/
-out/
-dist/
-build/
+# compiled output
+dist
+tmp
+out-tsc
 *.tsbuildinfo
-.turbo/
-.vercel/
+.expo
+.expo-shared
 
-# Environment & secrets (never commit)
-.env
-.env.*
-!.env.example
-!.env.*.example
-functions/.env
-services/api/.env
-apps/web/.env.local
-*.pem
-*.key
-*.p12
-service-account*.json
-firebase-service-account.json
-**/firebase-service-account.json
-**/credentials.json
-**/secrets.json
+# dependencies
+node_modules
 
-# Firebase
-.firebase/
-firebase-debug.log
-firestore-debug.log
-ui-debug.log
-database-debug.log
-pubsub-debug.log
-storage-debug.log
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# IDE & OS
-.idea/
+# IDE - VSCode
 .vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 !.vscode/extensions.json
-!.vscode/settings.json.example
-*.swp
-*.swo
-*~
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
 .DS_Store
 Thumbs.db
-Desktop.ini
 
-# Logs & runtime
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-.pnpm-debug.log*
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md
 
-# Testing & coverage
-coverage/
-.nyc_output/
-.jest/
-playwright-report/
-test-results/
-
-# Docker
-.docker/
-
-# Terraform / IaC
-*.tfstate
-*.tfstate.*
-.terraform/
-*.tfvars
-!*.tfvars.example
-
-# n8n local data
-n8n/.n8n/
-
-# Secrets directories
-secrets/
-credentials/
-
-# Uploads & generated media (local dev)
-uploads/
-tmp/
-temp/
-*.glb
-*.gltf
-
-# Cache
+# Replit
 .cache/
-.parcel-cache/
-.eslintcache
-.stylelintcache
-
-# Optional: local editor/agent (keep repo clean)
-.cursor/
-*.local.md
+.local/
