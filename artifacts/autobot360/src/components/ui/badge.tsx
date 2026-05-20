@@ -1,43 +1,58 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/lib/utils"
+import React from 'react';
+import styles from './Badge.module.css';
 
-const badgeVariants = cva(
-  // @replit
-  // Whitespace-nowrap: Badges should never wrap.
-  "whitespace-nowrap inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2" +
-  " hover-elevate ",
-  {
-    variants: {
-      variant: {
-        default:
-          // @replit shadow-xs instead of shadow, no hover because we use hover-elevate
-          "border-transparent bg-primary text-primary-foreground shadow-xs",
-        secondary:
-          // @replit no hover because we use hover-elevate
-          "border-transparent bg-secondary text-secondary-foreground",
-        destructive:
-          // @replit shadow-xs instead of shadow, no hover because we use hover-elevate
-          "border-transparent bg-destructive text-destructive-foreground shadow-xs",
-          // @replit shadow-xs" - use badge outline variable
-        outline: "text-foreground border [border-color:var(--badge-outline)]",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
-
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
-
-function Badge({ className, variant, ...props }: BadgeProps) {
-  return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
-  )
+interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  variant?: 'default' | 'primary' | 'secondary' | 'tertiary' | 'success' | 'warning' | 'error';
+  size?: 'sm' | 'md';
+  children: React.ReactNode;
 }
 
-export { Badge, badgeVariants }
+export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
+  ({ variant = 'default', size = 'md', className, children, ...props }, ref) => {
+    return (
+      <span
+        ref={ref}
+        className={`${styles.badge} ${styles[variant]} ${styles[size]} ${className || ''}`}
+        {...props}
+      >
+        {children}
+      </span>
+    );
+  }
+);
+
+Badge.displayName = 'Badge';
+
+interface ChipProps extends React.HTMLAttributes<HTMLDivElement> {
+  label: string;
+  onRemove?: () => void;
+  variant?: 'default' | 'active';
+  icon?: React.ReactNode;
+}
+
+export const Chip = React.forwardRef<HTMLDivElement, ChipProps>(
+  ({ label, onRemove, variant = 'default', icon, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={`${styles.chip} ${styles[`chip${variant.charAt(0).toUpperCase() + variant.slice(1)}`]} ${className || ''}`}
+        {...props}
+      >
+        {icon && <span className={styles.chipIcon}>{icon}</span>}
+        <span className={styles.chipLabel}>{label}</span>
+        {onRemove && (
+          <button
+            className={styles.chipRemove}
+            onClick={onRemove}
+            aria-label={`Remove ${label}`}
+          >
+            ×
+          </button>
+        )}
+      </div>
+    );
+  }
+);
+
+Chip.displayName = 'Chip';

@@ -1,0 +1,146 @@
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ../../node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[5].use[2]!../../node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[5].use[3]!./src/app/(dashboard)/product-analysis/product-analysis.module.css ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************/
+.product-analysis_workspace__3nUSN {
+  margin: -1.5rem;
+  height: calc(100vh - 4rem);
+  display: flex;
+  overflow: hidden;
+  background: #0f0d15;
+  color: #e7e0ed;
+}
+
+.product-analysis_feedColumn__qlb7D {
+  width: 33.333%;
+  min-width: 280px;
+  max-width: 420px;
+  border-right: 1px solid rgba(149, 142, 160, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.product-analysis_analysisColumn__BJzo6 {
+  flex: 1;
+  overflow-y: auto;
+  background: rgba(15, 13, 21, 0.3);
+}
+
+.product-analysis_glassCard__ey_wA {
+  background: rgba(15, 13, 21, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.product-analysis_activeFeedItem__XFHOm {
+  border-left: 4px solid #d0bcff !important;
+  background: rgba(208, 188, 255, 0.05);
+}
+
+.product-analysis_feedItemDimmed__bpqpe {
+  opacity: 0.7;
+}
+
+.product-analysis_glowAccent__eRl_v {
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+}
+
+.product-analysis_labelCaps___crg8 {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-analysis_customScrollbar__Yt8KV::-webkit-scrollbar {
+  width: 4px;
+}
+.product-analysis_customScrollbar__Yt8KV::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+.product-analysis_customScrollbar__Yt8KV::-webkit-scrollbar-thumb {
+  background: rgba(208, 188, 255, 0.2);
+  border-radius: 10px;
+}
+
+.product-analysis_aiReplyPanel__RM4Xm {
+  background: rgba(15, 13, 21, 0.5);
+  border-radius: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-analysis_aiReplyPanelPrimary__HYEbV {
+  border: 1px solid rgba(208, 188, 255, 0.2);
+}
+.product-analysis_aiReplyPanelPrimary__HYEbV::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #d0bcff;
+  opacity: 0.5;
+}
+
+.product-analysis_aiReplyPanelSecondary__w_oPI {
+  border: 1px solid rgba(76, 215, 246, 0.2);
+}
+.product-analysis_aiReplyPanelSecondary__w_oPI::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #4cd7f6;
+  opacity: 0.5;
+}
+
+.product-analysis_aiReplyPanelTertiary__C_Hg0 {
+  border: 1px solid rgba(79, 219, 200, 0.2);
+}
+.product-analysis_aiReplyPanelTertiary__C_Hg0::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #4fdbc8;
+  opacity: 0.5;
+}
+
+.product-analysis_metricValue__Xvz_x {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 2.5rem;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.product-analysis_btnPrimary__G3gEI {
+  background: #d0bcff;
+  color: #340080;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.product-analysis_btnPrimary__G3gEI:hover {
+  opacity: 0.9;
+  box-shadow: 0 0 20px rgba(208, 188, 255, 0.3);
+}
+
+.product-analysis_btnGhost__Cd_Fg {
+  background: #211e27;
+  border: 1px solid rgba(149, 142, 160, 0.3);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.product-analysis_btnGhost__Cd_Fg:hover {
+  background: #2c2832;
+}
+
