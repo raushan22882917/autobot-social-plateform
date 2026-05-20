@@ -1,0 +1,71 @@
+{
+  "name": "AutoBot360 - Failed Retry",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "error-trigger",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const err = $input.first().json;\nconst retryCount = (err.retryCount || 0) + 1;\nconst waitSeconds = [30, 120, 600, 3600, 21600][Math.min(retryCount - 1, 4)];\nreturn [{ json: { ...err, retryCount, waitSeconds, shouldRetry: retryCount <= 5 } }];"
+      },
+      "id": "calc-retry",
+      "name": "Calculate Retry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": { "boolean": [{ "value1": "={{ $json.shouldRetry }}", "value2": true }] }
+      },
+      "id": "if-retry",
+      "name": "IF Should Retry",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": { "amount": "={{ $json.waitSeconds }}", "unit": "seconds" },
+      "id": "wait",
+      "name": "Backoff Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.API_BASE_URL }}/internal/pubsub/publish",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [{ "name": "X-Internal-Api-Key", "value": "={{ $env.INTERNAL_API_KEY }}" }]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ eventType: 'publish.failed', tenantId: $json.tenantId, payload: { error: $json.error, retryCount: $json.retryCount }, idempotencyKey: `retry_${$json.executionId}_${$json.retryCount}` }) }}"
+      },
+      "id": "dlq",
+      "name": "Send to DLQ Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [910, 400]
+    }
+  ],
+  "connections": {
+    "Error Trigger": { "main": [[{ "node": "Calculate Retry", "type": "main", "index": 0 }]] },
+    "Calculate Retry": { "main": [[{ "node": "IF Should Retry", "type": "main", "index": 0 }]] },
+    "IF Should Retry": {
+      "main": [
+        [{ "node": "Backoff Wait", "type": "main", "index": 0 }],
+        [{ "node": "Send to DLQ Event", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "autobot360" }, { "name": "error-handling" }]
+}

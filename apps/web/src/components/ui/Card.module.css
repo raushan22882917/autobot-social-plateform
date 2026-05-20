@@ -1,0 +1,75 @@
+/* Card Component Styles */
+
+.card {
+  border-radius: var(--rounded-xl);
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+/* Variants */
+.default {
+  background: var(--glass-light);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+.elevated {
+  background: var(--color-surface-container);
+  border: 1px solid var(--color-surface-container-high);
+  box-shadow: var(--shadow-md);
+}
+
+.outlined {
+  background: transparent;
+  border: 1px solid var(--color-outline-variant);
+}
+
+/* Glow Effect */
+.glow {
+  box-shadow: var(--shadow-glow);
+}
+
+.glow:hover {
+  box-shadow: 0 0 60px rgba(139, 92, 246, 0.25);
+}
+
+/* Sections */
+.header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.body {
+  padding: var(--spacing-lg);
+}
+
+.footer {
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--glass-border);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Hover Effects */
+.default:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-primary);
+}
+
+.elevated:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .header,
+  .body,
+  .footer {
+    padding: var(--spacing-md);
+  }
+}

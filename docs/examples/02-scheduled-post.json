@@ -1,0 +1,23 @@
+{
+  "event": "publish.requested",
+  "eventId": "evt_sched_001",
+  "tenantId": "tenant_abc123",
+  "userId": "user_xyz789",
+  "idempotencyKey": "publish_sp_001_v1",
+  "timestamp": "2026-05-17T09:00:00Z",
+  "payload": {
+    "scheduledPostId": "sp_001",
+    "productId": "prod_001",
+    "platforms": ["instagram", "facebook"],
+    "socialAccountIds": ["sa_instagram_001", "sa_facebook_001"],
+    "caption": null,
+    "useAiCaption": true,
+    "hashtags": [],
+    "mediaUrls": [
+      "https://storage.googleapis.com/autobot360-prod/tenants/tenant_abc123/products/prod_001/front.jpg"
+    ],
+    "scheduledAt": "2026-05-18T10:00:00+05:30",
+    "timezone": "Asia/Kolkata",
+    "status": "pending"
+  }
+}

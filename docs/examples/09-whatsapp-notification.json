@@ -1,0 +1,53 @@
+{
+  "eventType": "notification.send",
+  "channel": "whatsapp",
+  "tenantId": "tenant_abc123",
+  "timestamp": "2026-05-17T15:00:10Z",
+  "notification": {
+    "type": "order_confirmed",
+    "recipient": {
+      "phone": "+919876543210",
+      "name": "Jane Buyer",
+      "role": "customer"
+    },
+    "template": {
+      "name": "order_confirmation",
+      "language": { "code": "en" },
+      "components": [
+        {
+          "type": "body",
+          "parameters": [
+            { "type": "text", "text": "Jane Buyer" },
+            { "type": "text", "text": "AB-2026-0048" },
+            { "type": "text", "text": "Handcrafted Leather Wallet - Brown" },
+            { "type": "text", "text": "₹2,949" }
+          ]
+        }
+      ]
+    },
+    "apiRequest": {
+      "method": "POST",
+      "url": "https://graph.facebook.com/v18.0/PHONE_NUMBER_ID/messages",
+      "body": {
+        "messaging_product": "whatsapp",
+        "to": "919876543210",
+        "type": "template",
+        "template": {
+          "name": "order_confirmation",
+          "language": { "code": "en" },
+          "components": []
+        }
+      }
+    },
+    "sellerAlert": {
+      "to": "+919123456789",
+      "template": "seller_new_order",
+      "parameters": ["AB-2026-0048", "₹2,949", "Jane Buyer"]
+    },
+    "log": {
+      "collection": "whatsapp_logs",
+      "status": "sent",
+      "wamid": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAERgSQzA1QjY4RkE4NkY3RkU5AA=="
+    }
+  }
+}

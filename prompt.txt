@@ -1,0 +1,543 @@
+You are a world-class SaaS system architect, senior AI engineer, cloud architect, full-stack engineer, n8n automation expert, Firebase expert, Google Cloud architect, and UI/UX designer.
+
+Your task is to design and generate a COMPLETE production-ready AI-powered social commerce SaaS platform named:
+
+"AutoBot360"
+
+========================================================
+CORE PLATFORM IDEA
+========================================================
+
+Build a multi-tenant SaaS platform where users can:
+
+1. Signup/Login
+2. Get personal dashboard
+3. Connect social media accounts
+4. Add/manage products
+5. Schedule posts
+6. Publish products automatically
+7. AI monitors comments/messages
+8. AI auto replies
+9. Generate leads
+10. Customer buys product
+11. Payment processing
+12. Create orders automatically
+13. Seller gets WhatsApp/email/dashboard notifications
+14. Analytics + engagement tracking
+15. AI-powered social selling automation
+
+========================================================
+IMPORTANT ARCHITECTURE RULE
+========================================================
+
+The platform must support:
+- millions of users
+- thousands of concurrent scheduled posts
+- scalable workflows
+- multi-user account isolation
+- secure token handling
+- queue-based processing
+- microservice-ready architecture
+
+========================================================
+TECH STACK
+========================================================
+
+Frontend:
+- Next.js 15
+- React
+- TypeScript
+- Tailwind CSS
+- Shadcn UI
+- Framer Motion
+
+Backend:
+- Node.js
+- Express.js
+- Firebase Admin SDK
+
+Database:
+- Firestore
+- Firebase Storage
+- Firebase Auth
+
+Automation:
+- n8n
+
+Cloud:
+- Google Cloud Platform
+- Cloud Run
+- Cloud Functions
+- Pub/Sub
+- API Gateway
+- Secret Manager
+- Load Balancer
+- Cloud Monitoring
+
+AI:
+- Gemini API
+
+Payments:
+- Razorpay
+
+Notifications:
+- WhatsApp Cloud API
+- Firebase Cloud Messaging
+- Email SMTP
+
+========================================================
+FULL SYSTEM FLOW
+========================================================
+
+User Signup/Login
+→ Dashboard
+→ Connect Social Accounts
+→ Add Product
+→ Schedule Product Publish
+→ Save in Firestore
+→ Backend triggers Pub/Sub Queue
+→ n8n workflow processes publish
+→ Social media post created
+→ Save platform post IDs
+→ Start monitoring comments
+→ AI auto reply
+→ Lead capture
+→ Customer clicks Buy Now
+→ Checkout page
+→ Razorpay payment
+→ Order created
+→ Seller notified
+→ Dashboard updated
+→ Analytics tracked
+
+========================================================
+DESIGN REQUIREMENTS
+========================================================
+
+Create modern premium UI similar to:
+- Shopify
+- HubSpot
+- Stripe Dashboard
+- Notion
+- Buffer
+- Hootsuite
+
+Design language:
+- glassmorphism
+- dark/light mode
+- smooth animations
+- futuristic AI feel
+- SaaS dashboard style
+- responsive mobile-first
+- rounded cards
+- gradient accents
+- premium charts
+- realtime notifications
+
+========================================================
+PAGES REQUIRED
+========================================================
+
+1. Landing Page
+2. Pricing
+3. Login
+4. Signup
+5. Dashboard
+6. Product Management
+7. Social Connections
+8. Scheduled Posts
+9. Analytics
+10. Orders
+11. AI Automation
+12. WhatsApp Notifications
+13. Customer Management
+14. Billing & Subscription
+15. Settings
+16. Notification Center
+17. AI Assistant
+18. Checkout
+19. Public Product Page
+20. Mobile Dashboard
+
+========================================================
+MULTI-AGENT SYSTEM REQUIREMENT
+========================================================
+
+VERY IMPORTANT:
+
+Design the system using separate AI agents/services/modules.
+
+Each agent must have:
+- responsibilities
+- APIs
+- database usage
+- workflow triggers
+- queue usage
+- communication flow
+
+========================================================
+AGENTS TO CREATE
+========================================================
+
+1. AUTH AGENT
+Responsibilities:
+- signup/login
+- JWT/session handling
+- Firebase auth
+- role permissions
+- subscription checks
+
+========================================================
+
+2. USER DASHBOARD AGENT
+Responsibilities:
+- dashboard data
+- notifications
+- realtime updates
+- analytics widgets
+
+========================================================
+
+3. PRODUCT AGENT
+Responsibilities:
+- CRUD products
+- product media upload
+- variants
+- inventory
+- AI descriptions
+
+========================================================
+
+4. SOCIAL CONNECT AGENT
+Responsibilities:
+- Instagram OAuth
+- Facebook OAuth
+- YouTube OAuth
+- LinkedIn OAuth
+- token refresh
+- account validation
+
+========================================================
+
+5. PUBLISH AGENT
+Responsibilities:
+- publish scheduled posts
+- AI captions
+- hashtag generation
+- social formatting
+- retry failed posts
+
+========================================================
+
+6. COMMENT MONITOR AGENT
+Responsibilities:
+- monitor comments
+- detect buying intent
+- AI reply generation
+- save leads
+- trigger sales workflow
+
+========================================================
+
+7. AI SALES AGENT
+Responsibilities:
+- AI chat replies
+- FAQ handling
+- pricing responses
+- checkout guidance
+- followups
+
+========================================================
+
+8. CHECKOUT AGENT
+Responsibilities:
+- checkout pages
+- shipping details
+- address handling
+- taxes
+- cart management
+
+========================================================
+
+9. PAYMENT AGENT
+Responsibilities:
+- Razorpay integration
+- payment verification
+- payment webhooks
+- invoice generation
+
+========================================================
+
+10. ORDER AGENT
+Responsibilities:
+- order creation
+- order status
+- shipping updates
+- seller notifications
+
+========================================================
+
+11. WHATSAPP AGENT
+Responsibilities:
+- WhatsApp notifications
+- customer updates
+- seller alerts
+- order messages
+
+========================================================
+
+12. ANALYTICS AGENT
+Responsibilities:
+- social engagement
+- sales tracking
+- conversion rates
+- AI insights
+
+========================================================
+
+13. NOTIFICATION AGENT
+Responsibilities:
+- realtime notifications
+- FCM push
+- email alerts
+- dashboard alerts
+
+========================================================
+
+14. N8N ORCHESTRATION AGENT
+Responsibilities:
+- workflow execution
+- queue handling
+- retries
+- automation triggers
+- webhook processing
+
+========================================================
+DATABASE DESIGN
+========================================================
+
+Design Firestore collections:
+
+users
+products
+orders
+payments
+social_accounts
+social_posts
+comments
+notifications
+analytics
+subscriptions
+customers
+scheduled_posts
+ai_replies
+whatsapp_logs
+
+Generate:
+- collection structure
+- document structure
+- indexing strategy
+- relationships
+
+========================================================
+GOOGLE CLOUD ARCHITECTURE
+========================================================
+
+Design complete cloud architecture using:
+
+- Firebase Auth
+- Firestore
+- Firebase Storage
+- Cloud Run
+- Cloud Functions
+- Pub/Sub
+- API Gateway
+- Secret Manager
+- Cloud Scheduler
+- Load Balancer
+- Cloud Monitoring
+- Vertex AI future integration
+
+Generate:
+- architecture diagram
+- service communication
+- scaling strategy
+- queue system
+- autoscaling strategy
+
+========================================================
+N8N ARCHITECTURE
+========================================================
+
+VERY IMPORTANT:
+
+Generate COMPLETE n8n architecture.
+
+Explain:
+- how workflows connect
+- how webhooks trigger
+- how Firestore connects
+- how Pub/Sub connects
+- how user identification works
+- how tokens are fetched
+- how retries work
+- how monitoring works
+
+========================================================
+N8N WORKFLOWS REQUIRED
+========================================================
+
+1. Publish Product Workflow
+2. AI Caption Workflow
+3. Social Media Publish Workflow
+4. Comment Monitoring Workflow
+5. AI Reply Workflow
+6. Lead Capture Workflow
+7. Checkout Workflow
+8. Razorpay Payment Workflow
+9. Order Creation Workflow
+10. WhatsApp Notification Workflow
+11. Email Workflow
+12. Token Refresh Workflow
+13. Analytics Sync Workflow
+14. Failed Retry Workflow
+15. Scheduled Post Workflow
+
+========================================================
+VERY IMPORTANT FOR N8N
+========================================================
+
+Each workflow must include:
+
+- trigger
+- input JSON
+- nodes
+- APIs used
+- Firestore collections used
+- webhook URLs
+- retry strategy
+- error handling
+- output JSON
+- queue logic
+
+========================================================
+GENERATE JSON EXAMPLES
+========================================================
+
+Generate example JSON for:
+
+1. product creation
+2. scheduled post
+3. social account token
+4. webhook payload
+5. comment event
+6. lead event
+7. payment success
+8. order object
+9. WhatsApp notification
+10. analytics event
+
+========================================================
+FRONTEND REQUIREMENTS
+========================================================
+
+Generate:
+- complete dashboard UI structure
+- sidebar navigation
+- component architecture
+- state management
+- realtime updates
+- API integration structure
+
+========================================================
+BACKEND REQUIREMENTS
+========================================================
+
+Generate:
+- Express route structure
+- controller architecture
+- middleware
+- authentication flow
+- webhook validation
+- service layer
+- queue integration
+- Firebase Admin integration
+
+========================================================
+SECURITY REQUIREMENTS
+========================================================
+
+Implement:
+- encrypted tokens
+- JWT auth
+- RBAC
+- API rate limiting
+- secure webhooks
+- OAuth security
+- HTTPS only
+- Cloud Armor
+- Firestore rules
+
+========================================================
+SCALABILITY REQUIREMENTS
+========================================================
+
+Must support:
+- millions of users
+- realtime updates
+- autoscaling workers
+- distributed queues
+- workflow retries
+- event-driven architecture
+
+========================================================
+DEPLOYMENT REQUIREMENTS
+========================================================
+
+Generate:
+- deployment architecture
+- Docker strategy
+- CI/CD
+- Cloud Run deployment
+- n8n deployment
+- Vercel frontend deployment
+
+========================================================
+FINAL OUTPUT FORMAT
+========================================================
+
+Generate ALL of the following in extreme detail:
+
+1. Full SaaS architecture
+2. Full UI/UX architecture
+3. Full backend architecture
+4. Full Firebase architecture
+5. Full Google Cloud architecture
+6. Full n8n architecture
+7. Full multi-agent architecture
+8. Complete database schema
+9. API documentation
+10. Workflow diagrams
+11. Event-driven architecture
+12. Queue architecture
+13. Security architecture
+14. Deployment strategy
+15. Scaling strategy
+16. Monitoring/logging strategy
+17. Error handling strategy
+18. Complete folder structure
+19. Complete webhook architecture
+20. End-to-end workflow examples
+
+========================================================
+MOST IMPORTANT
+========================================================
+
+This platform should feel like:
+- billion-dollar AI SaaS startup
+- enterprise-level architecture
+- production-ready scalable system
+- investor-ready platform
+- future unicorn startup
+
+Generate everything in deep technical detail.

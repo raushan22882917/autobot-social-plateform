@@ -1,0 +1,24 @@
+{
+  "eventType": "comment.received",
+  "eventId": "evt_comment_001",
+  "tenantId": "tenant_abc123",
+  "traceId": "projects/autobot360-prod/traces/abc123",
+  "idempotencyKey": "comment_cmt_17896543210",
+  "timestamp": "2026-05-17T14:30:05Z",
+  "payload": {
+    "commentId": "cmt_internal_001",
+    "socialPostId": "social_post_001",
+    "platform": "instagram",
+    "platformPostId": "ig_media_178901234",
+    "platformCommentId": "cmt_17896543210",
+    "authorId": "user_buyer_123",
+    "authorUsername": "buyer_jane",
+    "authorName": "Jane Buyer",
+    "text": "How much is this? Can I order 2?",
+    "intent": "buying",
+    "intentScore": 0.94,
+    "productId": "prod_001",
+    "productTitle": "Handcrafted Leather Wallet",
+    "productPrice": 2499
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "eventType": "lead.captured",
+  "eventId": "evt_lead_001",
+  "tenantId": "tenant_abc123",
+  "idempotencyKey": "lead_cmt_17896543210",
+  "timestamp": "2026-05-17T14:30:15Z",
+  "payload": {
+    "leadId": "lead_001",
+    "customerId": "cust_001",
+    "source": "instagram_comment",
+    "sourceId": "cmt_internal_001",
+    "socialPostId": "social_post_001",
+    "productId": "prod_001",
+    "score": 0.94,
+    "intent": "buying",
+    "customer": {
+      "name": "Jane Buyer",
+      "platformUsername": "buyer_jane",
+      "platform": "instagram",
+      "platformUserId": "user_buyer_123"
+    },
+    "message": "How much is this? Can I order 2?",
+    "status": "new",
+    "aiReplySent": true,
+    "checkoutLink": "https://autobot360.com/checkout/cs_lead_001"
+  }
+}

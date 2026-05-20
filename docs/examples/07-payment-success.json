@@ -1,0 +1,55 @@
+{
+  "eventType": "payment.success",
+  "eventId": "evt_pay_001",
+  "tenantId": "tenant_abc123",
+  "idempotencyKey": "payment_pay_razorpay_abc123",
+  "timestamp": "2026-05-17T15:00:00Z",
+  "payload": {
+    "paymentId": "pay_internal_001",
+    "razorpayOrderId": "order_razorpay_xyz",
+    "razorpayPaymentId": "pay_razorpay_abc123",
+    "checkoutSessionId": "cs_001",
+    "amount": 2949,
+    "currency": "INR",
+    "method": "upi",
+    "status": "captured",
+    "customer": {
+      "name": "Jane Buyer",
+      "email": "jane@example.com",
+      "phone": "+919876543210"
+    },
+    "items": [
+      {
+        "productId": "prod_001",
+        "variantId": "var_brown",
+        "title": "Handcrafted Leather Wallet - Brown",
+        "quantity": 1,
+        "price": 2499
+      }
+    ],
+    "breakdown": {
+      "subtotal": 2499,
+      "tax": 450,
+      "shipping": 0,
+      "discount": 0,
+      "total": 2949
+    }
+  },
+  "razorpayWebhook": {
+    "event": "payment.captured",
+    "payload": {
+      "payment": {
+        "entity": {
+          "id": "pay_razorpay_abc123",
+          "order_id": "order_razorpay_xyz",
+          "amount": 294900,
+          "currency": "INR",
+          "status": "captured",
+          "method": "upi",
+          "email": "jane@example.com",
+          "contact": "+919876543210"
+        }
+      }
+    }
+  }
+}

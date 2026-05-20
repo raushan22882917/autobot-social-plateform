@@ -1,0 +1,31 @@
+{
+  "note": "Raw tokens are NEVER stored in Firestore. This shows the Secret Manager payload structure.",
+  "firestoreDocument": {
+    "collection": "social_accounts",
+    "id": "sa_instagram_001",
+    "data": {
+      "tenantId": "tenant_abc123",
+      "platform": "instagram",
+      "platformUserId": "17841400000000000",
+      "username": "janes_boutique",
+      "displayName": "Jane's Boutique",
+      "profilePictureUrl": "https://scontent.cdninstagram.com/...",
+      "secretRef": "projects/autobot360-prod/secrets/social-token-tenant_abc123-sa_instagram_001/versions/3",
+      "tokenExpiresAt": "2026-07-17T10:00:00Z",
+      "scopes": ["instagram_basic", "instagram_content_publish", "pages_read_engagement"],
+      "status": "active",
+      "lastValidatedAt": "2026-05-17T08:00:00Z",
+      "connectedAt": "2026-01-15T12:00:00Z",
+      "connectedBy": "user_xyz789"
+    }
+  },
+  "secretManagerPayload": {
+    "accessToken": "IGQWRP...",
+    "refreshToken": null,
+    "tokenType": "bearer",
+    "expiresIn": 5184000,
+    "obtainedAt": "2026-05-17T08:00:00Z",
+    "platform": "instagram",
+    "encryptedWith": "projects/autobot360-prod/locations/asia-south1/keyRings/autobot360/cryptoKeys/token-encryption"
+  }
+}

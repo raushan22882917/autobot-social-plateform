@@ -1,0 +1,32 @@
+{
+  "name": "AutoBot360 - Email",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $env.SMTP_FROM || 'noreply@autobot360.com' }}",
+        "toEmail": "={{ $json.customerEmail }}",
+        "subject": "=Order confirmed #{{ $json.orderNumber }}",
+        "text": "=Hi {{ $json.customerName }}, your order {{ $json.orderNumber }} for ₹{{ $json.amount }} is confirmed. Thank you for shopping with us!"
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [470, 300],
+      "credentials": { "smtp": { "id": "SMTP_CREDENTIAL_ID", "name": "SMTP" } }
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [[{ "node": "Send Email", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "autobot360" }, { "name": "sub-workflow" }]
+}

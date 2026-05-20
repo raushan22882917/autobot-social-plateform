@@ -1,0 +1,90 @@
+{
+  "name": "AutoBot360 - Social Media Publish",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.API_BASE_URL }}/internal/tokens/{{ $json.socialAccountId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Internal-Api-Key", "value": "={{ $env.INTERNAL_API_KEY }}" },
+            { "name": "X-Tenant-Id", "value": "={{ $json.tenantId }}" }
+          ]
+        }
+      },
+      "id": "get-token",
+      "name": "Get Platform Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            { "conditions": { "string": [{ "value1": "={{ $('Execute Workflow Trigger').item.json.platform }}", "operation": "equals", "value2": "instagram" }] }, "renameOutput": true, "outputKey": "instagram" },
+            { "conditions": { "string": [{ "value1": "={{ $('Execute Workflow Trigger').item.json.platform }}", "operation": "equals", "value2": "facebook" }] }, "renameOutput": true, "outputKey": "facebook" }
+          ]
+        }
+      },
+      "id": "switch-platform",
+      "name": "Platform Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/{{ $json.platformUserId }}/media",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"image_url\": \"{{ $('Execute Workflow Trigger').item.json.mediaUrls[0] }}\", \"caption\": \"{{ $('Execute Workflow Trigger').item.json.caption }}\", \"access_token\": \"{{ $json.accessToken }}\" }"
+      },
+      "id": "ig-container",
+      "name": "IG Create Container",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "wait",
+      "name": "Wait Processing",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1130, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $('Execute Workflow Trigger').first().json;\nconst ig = $('IG Create Container').first().json;\nreturn [{ json: { platform: input.platform, platformPostId: ig.id || `sim_${Date.now()}`, permalink: ig.permalink || `https://instagram.com/p/simulated`, socialAccountId: input.socialAccountId } }];"
+      },
+      "id": "return-result",
+      "name": "Return Publish Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1350, 300]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [[{ "node": "Get Platform Token", "type": "main", "index": 0 }]] },
+    "Get Platform Token": { "main": [[{ "node": "Platform Switch", "type": "main", "index": 0 }]] },
+    "Platform Switch": { "main": [[{ "node": "IG Create Container", "type": "main", "index": 0 }], [{ "node": "Return Publish Result", "type": "main", "index": 0 }]] },
+    "IG Create Container": { "main": [[{ "node": "Wait Processing", "type": "main", "index": 0 }]] },
+    "Wait Processing": { "main": [[{ "node": "Return Publish Result", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "autobot360" }, { "name": "sub-workflow" }]
+}

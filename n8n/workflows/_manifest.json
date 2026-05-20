@@ -1,0 +1,57 @@
+{
+  "project": "AutoBot360",
+  "n8nVersion": ">=1.0.0",
+  "webhookBaseUrl": "http://localhost:5678/webhook",
+  "eventToWebhookMap": {
+    "publish.requested": "publish-product",
+    "comment.received": "comment-monitoring",
+    "payment.success": "razorpay-payment",
+    "order.created": "order-creation",
+    "token.expiring": "token-refresh",
+    "analytics.sync": "analytics-sync",
+    "connection.test": "autobot360-connection-test"
+  },
+  "workflows": [
+    { "file": "autobot360-connection-test.json", "type": "webhook", "path": "autobot360-connection-test", "required": true },
+    { "file": "publish-product.json", "type": "webhook", "path": "publish-product", "required": true },
+    { "file": "comment-monitoring.json", "type": "webhook", "path": "comment-monitoring", "required": true },
+    { "file": "razorpay-payment.json", "type": "webhook", "path": "razorpay-payment", "required": true },
+    { "file": "order-creation.json", "type": "webhook", "path": "order-creation", "required": true },
+    { "file": "checkout.json", "type": "webhook", "path": "checkout", "required": false },
+    { "file": "token-refresh.json", "type": "webhook", "path": "token-refresh", "required": false },
+    { "file": "analytics-sync.json", "type": "webhook", "path": "analytics-sync", "required": false },
+    { "file": "scheduled-post.json", "type": "cron", "path": null, "required": false },
+    { "file": "failed-retry.json", "type": "error", "path": null, "required": false },
+    { "file": "ai-caption.json", "type": "sub-workflow", "path": null, "required": true },
+    { "file": "social-media-publish.json", "type": "sub-workflow", "path": null, "required": true },
+    { "file": "ai-reply.json", "type": "sub-workflow", "path": null, "required": true },
+    { "file": "lead-capture.json", "type": "sub-workflow", "path": null, "required": true },
+    { "file": "whatsapp-notification.json", "type": "sub-workflow", "path": null, "required": false },
+    { "file": "email.json", "type": "sub-workflow", "path": null, "required": false }
+  ],
+  "requiredHeaders": {
+    "X-Webhook-Secret": "Per-tenant secret from AutoBot360 dashboard (Integrations → n8n)",
+    "X-Tenant-Id": "tenant_xxx",
+    "X-Idempotency-Key": "unique per event",
+    "Content-Type": "application/json"
+  },
+  "sampleEventEnvelope": {
+    "eventId": "evt_uuid",
+    "eventType": "publish.requested",
+    "version": "1.0",
+    "timestamp": "2026-05-17T12:00:00.000Z",
+    "tenantId": "tenant_abc123",
+    "userId": "user_xyz",
+    "traceId": "trace_uuid",
+    "idempotencyKey": "publish_sp_001_v1",
+    "payload": {
+      "scheduledPostId": "sp_001",
+      "productId": "prod_001",
+      "platforms": ["instagram"],
+      "socialAccountIds": ["sa_001"],
+      "useAiCaption": true,
+      "scheduledAt": "2026-05-17T12:00:00.000Z"
+    },
+    "metadata": { "source": "publish-agent" }
+  }
+}

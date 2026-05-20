@@ -1,0 +1,52 @@
+{
+  "name": "AutoBot360 - Checkout",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "checkout", "responseMode": "responseNode" },
+      "id": "webhook",
+      "name": "Checkout Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "checkout"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.API_BASE_URL }}/internal/checkout/sessions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Internal-Api-Key", "value": "={{ $env.INTERNAL_API_KEY }}" },
+            { "name": "X-Tenant-Id", "value": "={{ $json.body.tenantId }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body.payload) }}"
+      },
+      "id": "create-session",
+      "name": "Create Checkout Session",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "respond",
+      "name": "Respond Session",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [690, 300]
+    }
+  ],
+  "connections": {
+    "Checkout Webhook": { "main": [[{ "node": "Create Checkout Session", "type": "main", "index": 0 }]] },
+    "Create Checkout Session": { "main": [[{ "node": "Respond Session", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "autobot360" }, { "name": "checkout" }]
+}

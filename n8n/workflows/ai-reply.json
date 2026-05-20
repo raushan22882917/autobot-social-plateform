@@ -1,0 +1,58 @@
+{
+  "name": "AutoBot360 - AI Reply",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{ "name": "key", "value": "={{ $env.GEMINI_API_KEY }}" }]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"contents\": [{ \"parts\": [{ \"text\": \"You are a helpful social commerce assistant for {{ $json.storeName || 'the store' }}. Product: {{ $json.productTitle }}. Customer comment: {{ $json.text }}. Write a short friendly reply (max 280 chars). If they want to buy, include checkout hint.\" }] }] }"
+      },
+      "id": "gemini-reply",
+      "name": "Gemini Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.API_BASE_URL }}/internal/ai-replies",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Internal-Api-Key", "value": "={{ $env.INTERNAL_API_KEY }}" },
+            { "name": "X-Tenant-Id", "value": "={{ $('Execute Workflow Trigger').item.json.tenantId }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"commentId\": \"{{ $('Execute Workflow Trigger').item.json.commentId }}\", \"replyText\": \"{{ $json.candidates[0].content.parts[0].text }}\", \"autoPosted\": {{ $('Execute Workflow Trigger').item.json.autoReplyEnabled || false }} }"
+      },
+      "id": "save-reply",
+      "name": "Save AI Reply",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [690, 300]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [[{ "node": "Gemini Reply", "type": "main", "index": 0 }]] },
+    "Gemini Reply": { "main": [[{ "node": "Save AI Reply", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "autobot360" }, { "name": "sub-workflow" }]
+}

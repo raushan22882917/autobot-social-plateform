@@ -1,0 +1,51 @@
+{
+  "description": "Meta Instagram comment webhook payload received by Cloud Function",
+  "headers": {
+    "X-Hub-Signature-256": "sha256=abc123...",
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "object": "instagram",
+    "entry": [
+      {
+        "id": "17841400000000000",
+        "time": 1715934600,
+        "changes": [
+          {
+            "field": "comments",
+            "value": {
+              "id": "cmt_17896543210",
+              "text": "How much is this? Can I order 2?",
+              "from": {
+                "id": "user_buyer_123",
+                "username": "buyer_jane"
+              },
+              "media": {
+                "id": "ig_media_178901234",
+                "media_product_type": "FEED"
+              },
+              "parent_id": null,
+              "timestamp": "2026-05-17T14:30:00+0000"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "normalizedEvent": {
+    "eventType": "comment.received",
+    "eventId": "evt_comment_001",
+    "tenantId": "tenant_abc123",
+    "idempotencyKey": "comment_cmt_17896543210",
+    "payload": {
+      "platform": "instagram",
+      "platformPostId": "ig_media_178901234",
+      "platformCommentId": "cmt_17896543210",
+      "authorId": "user_buyer_123",
+      "authorUsername": "buyer_jane",
+      "text": "How much is this? Can I order 2?",
+      "parentCommentId": null,
+      "timestamp": "2026-05-17T14:30:00Z"
+    }
+  }
+}

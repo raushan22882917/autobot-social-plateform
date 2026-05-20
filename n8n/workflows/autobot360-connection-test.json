@@ -1,0 +1,34 @@
+{
+  "name": "AutoBot360 - Connection Test",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "autobot360-connection-test",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook",
+      "name": "Connection Test Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"ok\": true, \"tenantId\": \"{{ $json.body.tenantId || $json.headers['x-tenant-id'] }}\", \"message\": \"AutoBot360 connected\" }"
+      },
+      "id": "respond",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [470, 300]
+    }
+  ],
+  "connections": {
+    "Connection Test Webhook": {
+      "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]]
+    }
+  },
+  "tags": [{ "name": "autobot360" }]
+}

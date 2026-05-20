@@ -1,0 +1,51 @@
+{
+  "eventType": "analytics.sync",
+  "tenantId": "tenant_abc123",
+  "timestamp": "2026-05-17T16:00:00Z",
+  "payload": {
+    "date": "2026-05-17",
+    "period": "daily",
+    "metrics": {
+      "postsPublished": 3,
+      "totalEngagement": 1247,
+      "engagementBreakdown": {
+        "likes": 890,
+        "comments": 45,
+        "shares": 112,
+        "reach": 8500,
+        "saves": 200
+      },
+      "leadsCaptured": 12,
+      "ordersCount": 5,
+      "revenue": 14745,
+      "conversionRate": 3.8,
+      "averageOrderValue": 2949,
+      "topPerformingPost": {
+        "socialPostId": "social_post_001",
+        "platform": "instagram",
+        "engagement": 523,
+        "leads": 8,
+        "orders": 3
+      },
+      "platformBreakdown": {
+        "instagram": { "posts": 2, "engagement": 980, "leads": 10 },
+        "facebook": { "posts": 1, "engagement": 267, "leads": 2 }
+      },
+      "aiMetrics": {
+        "repliesGenerated": 45,
+        "repliesSent": 38,
+        "approvalRate": 0.84,
+        "avgResponseTimeMs": 2300
+      }
+    },
+    "aiInsight": {
+      "summary": "Instagram posts with product close-ups generated 3x more buying-intent comments. Peak engagement window: 10-11 AM IST.",
+      "recommendations": [
+        "Schedule next wallet post at 10:30 AM IST Tuesday",
+        "Add 'DM to order' CTA — 40% higher conversion on similar posts",
+        "Respond to unanswered comments from yesterday (3 pending)"
+      ],
+      "generatedBy": "gemini-2.0-flash"
+    }
+  }
+}

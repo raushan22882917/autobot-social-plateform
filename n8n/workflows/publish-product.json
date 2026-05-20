@@ -1,0 +1,166 @@
+{
+  "name": "AutoBot360 - Publish Product",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "publish-product",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "publish-product"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.headers['x-webhook-secret'] }}",
+              "operation": "equals",
+              "value2": "={{ $env.N8N_WEBHOOK_SECRET }}"
+            }
+          ]
+        }
+      },
+      "id": "validate-secret",
+      "name": "Validate Webhook Secret",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.API_BASE_URL }}/internal/idempotency/check",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Internal-Api-Key", "value": "={{ $env.INTERNAL_API_KEY }}" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "key", "value": "={{ $json.body.idempotencyKey }}" },
+            { "name": "ttlHours", "value": "24" }
+          ]
+        }
+      },
+      "id": "idempotency-check",
+      "name": "Idempotency Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.API_BASE_URL }}/internal/scheduled-posts/{{ $json.body.payload.scheduledPostId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Internal-Api-Key", "value": "={{ $env.INTERNAL_API_KEY }}" },
+            { "name": "X-Tenant-Id", "value": "={{ $json.body.tenantId }}" }
+          ]
+        }
+      },
+      "id": "fetch-scheduled-post",
+      "name": "Fetch Scheduled Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.API_BASE_URL }}/internal/scheduled-posts/{{ $json.body.payload.scheduledPostId }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{ \"status\": \"processing\" }"
+      },
+      "id": "update-status-processing",
+      "name": "Update Status Processing",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": "={{ $env.AI_CAPTION_WORKFLOW_ID }}",
+        "mode": "each"
+      },
+      "id": "ai-caption",
+      "name": "AI Caption Workflow",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1350, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "loop-platforms",
+      "name": "Loop Platforms",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [1570, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": "={{ $env.SOCIAL_PUBLISH_WORKFLOW_ID }}"
+      },
+      "id": "social-publish",
+      "name": "Social Media Publish",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1790, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.API_BASE_URL }}/internal/pubsub/publish",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"eventType\": \"publish.completed\", \"tenantId\": \"{{ $('Webhook Trigger').item.json.body.tenantId }}\", \"payload\": { \"scheduledPostId\": \"{{ $('Webhook Trigger').item.json.body.payload.scheduledPostId }}\", \"socialPosts\": {{ JSON.stringify($json.socialPosts) }} } }"
+      },
+      "id": "publish-completed",
+      "name": "Publish Completed Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2010, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"success\": true, \"executionId\": \"{{ $execution.id }}\" }"
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2230, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": { "main": [[{ "node": "Validate Webhook Secret", "type": "main", "index": 0 }]] },
+    "Validate Webhook Secret": { "main": [[{ "node": "Idempotency Check", "type": "main", "index": 0 }]] },
+    "Idempotency Check": { "main": [[{ "node": "Fetch Scheduled Post", "type": "main", "index": 0 }]] },
+    "Fetch Scheduled Post": { "main": [[{ "node": "Update Status Processing", "type": "main", "index": 0 }]] },
+    "Update Status Processing": { "main": [[{ "node": "AI Caption Workflow", "type": "main", "index": 0 }]] },
+    "AI Caption Workflow": { "main": [[{ "node": "Loop Platforms", "type": "main", "index": 0 }]] },
+    "Loop Platforms": { "main": [[{ "node": "Social Media Publish", "type": "main", "index": 0 }]] },
+    "Social Media Publish": { "main": [[{ "node": "Publish Completed Event", "type": "main", "index": 0 }]] },
+    "Publish Completed Event": { "main": [[{ "node": "Respond Success", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "failed-retry-workflow-id"
+  },
+  "tags": [{ "name": "autobot360" }, { "name": "publish" }]
+}

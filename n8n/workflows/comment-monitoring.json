@@ -1,0 +1,130 @@
+{
+  "name": "AutoBot360 - Comment Monitoring",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "comment-monitoring",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook",
+      "name": "Comment Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.API_BASE_URL }}/internal/social-posts/by-platform-id/{{ $json.body.payload.platformPostId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Tenant-Id", "value": "={{ $json.body.tenantId }}" }
+          ]
+        }
+      },
+      "id": "resolve-post",
+      "name": "Resolve Social Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.API_BASE_URL }}/internal/comments",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body.payload) }}"
+      },
+      "id": "save-comment",
+      "name": "Save Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{ "name": "key", "value": "={{ $env.GEMINI_API_KEY }}" }]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"contents\": [{ \"parts\": [{ \"text\": \"Classify this social media comment intent. Product: {{ $json.productTitle }}. Comment: {{ $json.body.payload.text }}. Respond JSON only: { intent: buying|question|praise|complaint|spam|unknown, score: 0-1 }\" }] }] }"
+      },
+      "id": "intent-detection",
+      "name": "Gemini Intent Detection",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ JSON.parse($json.candidates[0].content.parts[0].text).intent }}",
+              "operation": "equals",
+              "value2": "buying"
+            }
+          ]
+        }
+      },
+      "id": "if-buying",
+      "name": "IF Buying Intent",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "workflowId": "={{ $env.LEAD_CAPTURE_WORKFLOW_ID }}"
+      },
+      "id": "lead-capture",
+      "name": "Lead Capture",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1350, 200]
+    },
+    {
+      "parameters": {
+        "workflowId": "={{ $env.AI_REPLY_WORKFLOW_ID }}"
+      },
+      "id": "ai-reply",
+      "name": "AI Reply",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [1350, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"processed\": true }"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1570, 300]
+    }
+  ],
+  "connections": {
+    "Comment Webhook": { "main": [[{ "node": "Resolve Social Post", "type": "main", "index": 0 }]] },
+    "Resolve Social Post": { "main": [[{ "node": "Save Comment", "type": "main", "index": 0 }]] },
+    "Save Comment": { "main": [[{ "node": "Gemini Intent Detection", "type": "main", "index": 0 }]] },
+    "Gemini Intent Detection": { "main": [[{ "node": "IF Buying Intent", "type": "main", "index": 0 }]] },
+    "IF Buying Intent": {
+      "main": [
+        [{ "node": "Lead Capture", "type": "main", "index": 0 }],
+        [{ "node": "AI Reply", "type": "main", "index": 0 }]
+      ]
+    },
+    "Lead Capture": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] },
+    "AI Reply": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "tags": [{ "name": "autobot360" }, { "name": "comments" }]
+}

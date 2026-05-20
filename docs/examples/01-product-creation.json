@@ -1,0 +1,53 @@
+{
+  "event": "product.created",
+  "tenantId": "tenant_abc123",
+  "userId": "user_xyz789",
+  "timestamp": "2026-05-17T10:30:00Z",
+  "product": {
+    "id": "prod_001",
+    "title": "Handcrafted Leather Wallet",
+    "slug": "handcrafted-leather-wallet",
+    "description": "Premium full-grain leather wallet with RFID blocking. Handmade in India.",
+    "aiDescription": "Discover timeless elegance with our handcrafted leather wallet — where premium full-grain leather meets modern RFID protection.",
+    "price": 2499,
+    "compareAtPrice": 3499,
+    "currency": "INR",
+    "sku": "WL-LEATHER-001",
+    "inventory": 50,
+    "trackInventory": true,
+    "status": "active",
+    "images": [
+      {
+        "url": "https://storage.googleapis.com/autobot360-prod/tenants/tenant_abc123/products/prod_001/front.jpg",
+        "alt": "Wallet front view",
+        "order": 0
+      },
+      {
+        "url": "https://storage.googleapis.com/autobot360-prod/tenants/tenant_abc123/products/prod_001/open.jpg",
+        "alt": "Wallet open view",
+        "order": 1
+      }
+    ],
+    "variants": [
+      {
+        "id": "var_brown",
+        "name": "Brown",
+        "options": { "color": "Brown" },
+        "price": 2499,
+        "sku": "WL-LEATHER-001-BRN",
+        "inventory": 30
+      },
+      {
+        "id": "var_black",
+        "name": "Black",
+        "options": { "color": "Black" },
+        "price": 2499,
+        "sku": "WL-LEATHER-001-BLK",
+        "inventory": 20
+      }
+    ],
+    "categories": ["Accessories", "Wallets"],
+    "tags": ["leather", "handmade", "wallet", "premium"],
+    "publicUrl": "https://autobot360.com/p/janes-boutique/handcrafted-leather-wallet"
+  }
+}

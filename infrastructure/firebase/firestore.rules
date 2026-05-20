@@ -1,0 +1,111 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function belongsToTenant(tenantId) {
+      return isAuthenticated() && getUserData().tenantId == tenantId;
+    }
+
+    function hasRole(roles) {
+      return isAuthenticated() && getUserData().role in roles;
+    }
+
+    // Users — own document only
+    match /users/{userId} {
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isAuthenticated() && request.auth.uid == userId
+        && !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(['tenantId', 'role', 'subscriptionId']);
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Tenants — read own tenant; writes via Admin SDK only
+    match /tenants/{tenantId} {
+      allow read: if belongsToTenant(tenantId);
+      allow write: if false;
+    }
+
+    // Subscriptions — owner only
+    match /subscriptions/{tenantId} {
+      allow read: if belongsToTenant(tenantId);
+      allow write: if false; // Server-only via Admin SDK
+    }
+
+    // Products — tenant scoped
+    match /products/{productId} {
+      allow read: if belongsToTenant(resource.data.tenantId);
+      allow create: if isAuthenticated()
+        && request.resource.data.tenantId == getUserData().tenantId
+        && hasRole(['owner', 'admin']);
+      allow update, delete: if belongsToTenant(resource.data.tenantId)
+        && hasRole(['owner', 'admin']);
+    }
+
+    // Orders — tenant scoped
+    match /orders/{orderId} {
+      allow read: if belongsToTenant(resource.data.tenantId);
+      allow write: if false; // Server-only
+    }
+
+    // Social accounts — tenant scoped, no token fields
+    match /social_accounts/{accountId} {
+      allow read: if belongsToTenant(resource.data.tenantId);
+      allow write: if false; // OAuth via server only
+    }
+    match /social_tokens/{accountId} {
+      allow read, write: if false;
+    }
+
+    // Scheduled posts
+    match /scheduled_posts/{postId} {
+      allow read: if belongsToTenant(resource.data.tenantId);
+      allow create: if isAuthenticated()
+        && request.resource.data.tenantId == getUserData().tenantId
+        && hasRole(['owner', 'admin']);
+      allow update: if belongsToTenant(resource.data.tenantId)
+        && hasRole(['owner', 'admin']);
+    }
+
+    // Notifications — user scoped within tenant
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+    }
+
+    // Comments, customers, analytics — tenant read
+    match /comments/{id} {
+      allow read: if belongsToTenant(resource.data.tenantId);
+      allow write: if false;
+    }
+    match /customers/{id} {
+      allow read: if belongsToTenant(resource.data.tenantId);
+      allow write: if false;
+    }
+    match /analytics/{tenantId}/{document=**} {
+      allow read: if belongsToTenant(tenantId);
+      allow write: if false;
+    }
+
+    // Server-only collections
+    match /payments/{id} { allow read, write: if false; }
+    match /checkout_sessions/{id} { allow read, write: if false; }
+    match /idempotency_keys/{id} { allow read, write: if false; }
+    match /workflow_executions/{id} { allow read, write: if false; }
+    match /whatsapp_logs/{id} { allow read, write: if false; }
+    match /ai_replies/{id} { allow read: if belongsToTenant(resource.data.tenantId); allow write: if false; }
+    match /social_posts/{id} { allow read: if belongsToTenant(resource.data.tenantId); allow write: if false; }
+    match /dashboard_cache/{tenantId} { allow read: if belongsToTenant(tenantId); allow write: if false; }
+    match /_health/{docId} { allow read, write: if false; }
+  }
+}

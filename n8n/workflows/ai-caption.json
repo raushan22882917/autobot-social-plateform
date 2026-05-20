@@ -1,0 +1,58 @@
+{
+  "name": "AutoBot360 - AI Caption",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\nconst product = input.product || {};\nconst platform = input.platform || 'instagram';\nconst prompt = `Write a ${platform} product caption for:\\nTitle: ${product.title}\\nDescription: ${product.description || ''}\\nPrice: ₹${product.price || 0}\\nTone: ${input.tone || 'engaging'}\\nReturn JSON only: { \"caption\": \"...\", \"hashtags\": [\"#tag1\"], \"fullText\": \"caption with hashtags\" }`;\nreturn [{ json: { ...input, prompt } }];"
+      },
+      "id": "build-prompt",
+      "name": "Build Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [{ "name": "key", "value": "={{ $env.GEMINI_API_KEY }}" }]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"contents\": [{ \"parts\": [{ \"text\": {{ JSON.stringify($json.prompt) }} }] }] }"
+      },
+      "id": "gemini",
+      "name": "Gemini Generate Caption",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $json.candidates?.[0]?.content?.parts?.[0]?.text || '{}';\nlet parsed;\ntry { parsed = JSON.parse(raw.replace(/```json\\n?|```/g, '').trim()); } catch { parsed = { caption: raw, hashtags: [], fullText: raw }; }\nreturn [{ json: { caption: parsed.caption, hashtags: parsed.hashtags || [], fullText: parsed.fullText || parsed.caption } }];"
+      },
+      "id": "parse",
+      "name": "Parse Caption",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 300]
+    }
+  ],
+  "connections": {
+    "Execute Workflow Trigger": { "main": [[{ "node": "Build Prompt", "type": "main", "index": 0 }]] },
+    "Build Prompt": { "main": [[{ "node": "Gemini Generate Caption", "type": "main", "index": 0 }]] },
+    "Gemini Generate Caption": { "main": [[{ "node": "Parse Caption", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "autobot360" }, { "name": "sub-workflow" }]
+}
