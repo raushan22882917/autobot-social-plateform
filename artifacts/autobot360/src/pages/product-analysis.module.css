@@ -1,0 +1,142 @@
+.workspace {
+  margin: -1.5rem;
+  height: calc(100vh - 4rem);
+  display: flex;
+  overflow: hidden;
+  background: #0f0d15;
+  color: #e7e0ed;
+}
+
+.feedColumn {
+  width: 33.333%;
+  min-width: 280px;
+  max-width: 420px;
+  border-right: 1px solid rgba(149, 142, 160, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.analysisColumn {
+  flex: 1;
+  overflow-y: auto;
+  background: rgba(15, 13, 21, 0.3);
+}
+
+.glassCard {
+  background: rgba(15, 13, 21, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.activeFeedItem {
+  border-left: 4px solid #d0bcff !important;
+  background: rgba(208, 188, 255, 0.05);
+}
+
+.feedItemDimmed {
+  opacity: 0.7;
+}
+
+.glowAccent {
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+}
+
+.labelCaps {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customScrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.customScrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+.customScrollbar::-webkit-scrollbar-thumb {
+  background: rgba(208, 188, 255, 0.2);
+  border-radius: 10px;
+}
+
+.aiReplyPanel {
+  background: rgba(15, 13, 21, 0.5);
+  border-radius: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.aiReplyPanelPrimary {
+  border: 1px solid rgba(208, 188, 255, 0.2);
+}
+.aiReplyPanelPrimary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #d0bcff;
+  opacity: 0.5;
+}
+
+.aiReplyPanelSecondary {
+  border: 1px solid rgba(76, 215, 246, 0.2);
+}
+.aiReplyPanelSecondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #4cd7f6;
+  opacity: 0.5;
+}
+
+.aiReplyPanelTertiary {
+  border: 1px solid rgba(79, 219, 200, 0.2);
+}
+.aiReplyPanelTertiary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: #4fdbc8;
+  opacity: 0.5;
+}
+
+.metricValue {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 2.5rem;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.btnPrimary {
+  background: #d0bcff;
+  color: #340080;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.btnPrimary:hover {
+  opacity: 0.9;
+  box-shadow: 0 0 20px rgba(208, 188, 255, 0.3);
+}
+
+.btnGhost {
+  background: #211e27;
+  border: 1px solid rgba(149, 142, 160, 0.3);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.btnGhost:hover {
+  background: #2c2832;
+}

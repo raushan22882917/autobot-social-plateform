@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "AutoBot360"
+version = "1.0.0"
+id = "artifacts/autobot360"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25749
+
+[services.development]
+run = "pnpm --filter @workspace/autobot360 run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/autobot360", "run", "build" ]
+publicDir = "artifacts/autobot360/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25749"
+BASE_PATH = "/"
