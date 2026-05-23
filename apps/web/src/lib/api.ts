@@ -75,6 +75,7 @@ export interface Product {
   publicUrl: string;
   createdAt: string;
   lastAnalyzedAt?: string;
+  lastSyncedAt?: string;
 }
 
 export interface ProductCommentReplyStatus {
@@ -336,7 +337,7 @@ export const apiClient = {
 
   getProductAnalysis: (token: string, productId: string) =>
     api<{
-      product: Product & { lastAnalyzedAt?: string; lastSyncedAt?: string };
+      product: Product;
       stats: {
         totalPosts: number;
         publishedPosts: number;
