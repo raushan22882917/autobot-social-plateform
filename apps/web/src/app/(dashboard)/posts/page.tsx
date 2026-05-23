@@ -19,7 +19,7 @@ import { Label } from '@/components/ui/label';
 import { PageHeader, DataToolbar, DataTable, StatusBadge, EmptyState, type Column } from '@/components/data';
 import { useListControls } from '@/hooks/use-list-controls';
 
-const PLATFORMS = ['instagram', 'facebook', 'youtube', 'tiktok'];
+const PLATFORMS = ['instagram', 'facebook', 'youtube', 'whatsapp'];
 
 export default function PostsPage() {
   const { token } = useAuth();
@@ -287,7 +287,7 @@ export default function PostsPage() {
         totalPages={list.totalPages}
         onPageChange={list.setPage}
         extra={
-          <button type="button" onClick={load} className="text-xs text-violet-400 hover:underline">
+          <button type="button" onClick={load} className="text-xs text-brand-instagram hover:underline">
             Refresh
           </button>
         }
@@ -344,7 +344,7 @@ export default function PostsPage() {
                   type="button"
                   onClick={() => togglePlatform(p)}
                   className={`rounded-lg px-3 py-1.5 text-sm capitalize ${
-                    form.platforms.includes(p) ? 'bg-violet-500/30 text-violet-300' : 'bg-white/5 text-muted-foreground'
+                    form.platforms.includes(p) ? 'bg-brand-instagram/30 text-brand-instagram' : 'bg-white/5 text-muted-foreground'
                   }`}
                 >
                   {p}

@@ -1,3 +1,4 @@
+import { envValue } from '../../../lib/env';
 import { getOAuthRedirectUri } from '../config';
 import type { SaveSocialAccountInput } from '../social-service';
 
@@ -8,10 +9,10 @@ const YOUTUBE_SCOPES = [
 ].join(' ');
 
 function clientId() {
-  return process.env.GOOGLE_OAUTH_CLIENT_ID!;
+  return envValue('GOOGLE_OAUTH_CLIENT_ID', 'GOOGLE_CLIENT_ID', 'YOUTUBE_CLIENT_ID')!;
 }
 function clientSecret() {
-  return process.env.GOOGLE_OAUTH_CLIENT_SECRET!;
+  return envValue('GOOGLE_OAUTH_CLIENT_SECRET', 'GOOGLE_CLIENT_SECRET', 'YOUTUBE_CLIENT_SECRET')!;
 }
 
 export function buildYouTubeAuthUrl(state: string): string {

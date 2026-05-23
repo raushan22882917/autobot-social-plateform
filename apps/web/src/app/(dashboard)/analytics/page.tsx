@@ -48,7 +48,7 @@ export default function AnalyticsPage() {
               {loading ? '—' : k === 'revenue' ? `₹${(data?.[k]?.total ?? 0).toLocaleString('en-IN')}` : data?.[k]?.total ?? 0}
             </p>
             {!loading && data?.[k]?.change !== undefined && (
-              <p className={`mt-1 text-xs ${data[k].change >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+              <p className={`mt-1 text-xs ${data[k].change >= 0 ? 'text-brand-whatsapp' : 'text-red-400'}`}>
                 {data[k].change >= 0 ? '+' : ''}{data[k].change}% vs prior period
               </p>
             )}

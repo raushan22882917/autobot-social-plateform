@@ -6,14 +6,28 @@ import { isDevStore } from './db';
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
 
+function resolveContentType(contentType: string, originalName: string): string {
+  const ext = path.extname(originalName).toLowerCase();
+  if (contentType.startsWith('image/') || contentType.startsWith('video/')) return contentType;
+  if (['.mp4', '.mov', '.webm', '.m4v'].includes(ext)) {
+    return ext === '.mov' ? 'video/quicktime' : 'video/mp4';
+  }
+  if (['.jpg', '.jpeg'].includes(ext)) return 'image/jpeg';
+  if (ext === '.png') return 'image/png';
+  if (ext === '.webp') return 'image/webp';
+  if (ext === '.gif') return 'image/gif';
+  return contentType || 'application/octet-stream';
+}
+
 export async function uploadStudioMediaFile(
   tenantId: string,
   buffer: Buffer,
   contentType: string,
   originalName: string
 ): Promise<{ url: string; type: 'image' | 'video' | 'model' }> {
-  const isVideo = contentType.startsWith('video/');
-  const isModel = contentType.includes('gltf') || contentType.includes('model');
+  const resolvedType = resolveContentType(contentType, originalName);
+  const isVideo = resolvedType.startsWith('video/');
+  const isModel = resolvedType.includes('gltf') || resolvedType.includes('model');
   const maxBytes = isVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
   if (buffer.length > maxBytes) {
     throw new Error(`File too large (max ${isVideo ? '100MB' : '10MB'})`);
@@ -45,7 +59,7 @@ export async function uploadStudioMediaFile(
 
   await file.save(buffer, {
     metadata: {
-      contentType,
+      contentType: resolvedType,
       cacheControl: 'public, max-age=31536000',
       metadata: {
         firebaseStorageDownloadTokens: downloadToken,

@@ -24,9 +24,9 @@ const buttonVariants = cva(
         ghost: "border border-transparent",
         link: "text-primary underline-offset-4 hover:underline",
         primary:
-          "bg-violet-600 text-white border border-violet-500 hover:bg-violet-500",
+          "bg-brand-instagram text-white border border-brand-instagram/80 hover:opacity-90",
         danger:
-          "bg-red-600/20 text-red-400 border border-red-500/30 hover:bg-red-600/30",
+          "bg-brand-youtube/15 text-brand-youtube border border-brand-youtube/30 hover:bg-brand-youtube/25",
       },
       size: {
         default: "min-h-9 px-4 py-2",

@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { db } from '../../lib/db';
 import type { AuthRequest } from '../../middleware/auth';
-import { getN8nConnection } from '../orchestration/n8n-service';
 
 export const dashboardRouter = Router();
 
@@ -18,7 +17,6 @@ dashboardRouter.get('/', async (req: AuthRequest, res, next) => {
     ]);
 
     const revenue = orders.reduce((sum, o) => sum + ((o.total as number) || 0), 0);
-    const n8n = await getN8nConnection(tenantId);
     const dbUser = await db.get('users', req.user!.uid);
     const tenant = await db.get('tenants', tenantId);
 
@@ -29,11 +27,6 @@ dashboardRouter.get('/', async (req: AuthRequest, res, next) => {
         storeName: (dbUser?.storeName as string) || (tenant?.storeName as string) || 'My Store',
         email: (dbUser?.email as string) || req.user!.email,
         tenantId,
-      },
-      n8n: {
-        connected: n8n?.status === 'connected',
-        status: n8n?.status || 'disconnected',
-        lastTestedAt: n8n?.lastTestedAt,
       },
       kpis: {
         products: products.length,

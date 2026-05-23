@@ -26,15 +26,15 @@ export default function AdminOverviewPage() {
   if (!isSuperAdmin(user?.role)) {
     return (
       <div className="flex flex-1 items-center justify-center p-12">
-        <p className="text-sm text-white/50">Platform admin access only.</p>
+        <p className="text-sm text-muted-foreground">Platform admin access only.</p>
       </div>
     );
   }
 
   const cards = [
-    { label: 'Total users', value: stats?.totalUsers ?? '—', icon: Users, href: '/admin/users', color: 'text-violet-400' },
-    { label: 'Stores', value: stats?.totalTenants ?? '—', icon: Building2, href: '/admin/tenants', color: 'text-cyan-400' },
-    { label: 'Orders', value: stats?.totalOrders ?? '—', icon: ShoppingCart, href: '/orders', color: 'text-emerald-400' },
+    { label: 'Total users', value: stats?.totalUsers ?? '—', icon: Users, href: '/admin/users', color: 'text-brand-instagram' },
+    { label: 'Stores', value: stats?.totalTenants ?? '—', icon: Building2, href: '/admin/tenants', color: 'text-brand-facebook' },
+    { label: 'Orders', value: stats?.totalOrders ?? '—', icon: ShoppingCart, href: '/orders', color: 'text-brand-whatsapp' },
   ];
 
   return (
@@ -45,10 +45,10 @@ export default function AdminOverviewPage() {
       />
 
       <div className="glow-card flex items-center gap-4 p-5">
-        <Shield className="h-8 w-8 text-violet-400" />
+        <Shield className="h-8 w-8 text-brand-instagram" />
         <div>
-          <p className="font-semibold text-white">Signed in as platform admin</p>
-          <p className="text-sm text-white/50">{user?.email}</p>
+          <p className="font-semibold text-foreground">Signed in as platform admin</p>
+          <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
       </div>
 
@@ -57,10 +57,10 @@ export default function AdminOverviewPage() {
           <Link key={c.href} href={c.href} className="metric-card group block">
             <div className="flex items-center justify-between">
               <c.icon className={`h-5 w-5 ${c.color}`} />
-              <ArrowRight className="h-4 w-4 text-white/20 transition group-hover:text-violet-400" />
+              <ArrowRight className="h-4 w-4 text-muted-foreground transition group-hover:text-brand-instagram" />
             </div>
             <p className="mt-4 text-3xl font-bold">{c.value}</p>
-            <p className="text-sm text-white/50">{c.label}</p>
+            <p className="text-sm text-muted-foreground">{c.label}</p>
           </Link>
         ))}
       </div>
@@ -70,7 +70,7 @@ export default function AdminOverviewPage() {
           <h3 className="mb-4 font-semibold">Users by role</h3>
           <div className="flex flex-wrap gap-3">
             {Object.entries(stats.usersByRole).map(([role, count]) => (
-              <span key={role} className="badge badge-violet">
+              <span key={role} className="badge badge-instagram">
                 {role}: {count}
               </span>
             ))}

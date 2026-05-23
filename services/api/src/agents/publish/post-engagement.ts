@@ -30,7 +30,20 @@ export async function loadPostEngagement(
       continue;
     }
 
-    const creds = await getSocialCredentials(tenantId, platform as SocialPlatform);
+    let creds = null;
+    try {
+      creds = await getSocialCredentials(tenantId, platform as SocialPlatform);
+    } catch (err) {
+      out.push({
+        platform,
+        platformPostId: pr.platformPostId,
+        platformPostUrl: pr.platformPostUrl,
+        metrics: {},
+        comments: [],
+        error: err instanceof Error ? err.message : 'Could not load social credentials',
+      });
+      continue;
+    }
     if (!creds) {
       out.push({
         platform,
@@ -38,7 +51,7 @@ export async function loadPostEngagement(
         platformPostUrl: pr.platformPostUrl,
         metrics: {},
         comments: [],
-        error: `${platform} account not connected`,
+        error: `${platform} not connected or token expired — reconnect in Social settings`,
       });
       continue;
     }

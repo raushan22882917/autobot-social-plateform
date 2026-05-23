@@ -43,7 +43,7 @@ export default function AdminUsersPage() {
   }
 
   if (!isSuperAdmin(user?.role)) {
-    return <p className="p-12 text-sm text-white/50">Platform admin access only.</p>;
+    return <p className="p-12 text-sm text-muted-foreground">Platform admin access only.</p>;
   }
 
   return (
@@ -59,14 +59,14 @@ export default function AdminUsersPage() {
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-instagram border-t-transparent" />
         </div>
       ) : users.length === 0 ? (
         <EmptyState icon={<Users className="h-8 w-8" />} title="No users found" description="Try a different search." />
       ) : (
         <div className="glass-card overflow-hidden">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-white/10 bg-white/[0.03] text-xs uppercase tracking-wider text-white/40">
+            <thead className="border-b border-white/10 bg-muted text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">User</th>
                 <th className="px-4 py-3">Store</th>
@@ -76,14 +76,14 @@ export default function AdminUsersPage() {
             </thead>
             <tbody className="divide-y divide-white/10">
               {users.map((u) => (
-                <tr key={u.uid} className="hover:bg-white/[0.03]">
+                <tr key={u.uid} className="hover:bg-muted">
                   <td className="px-4 py-3">
                     <p className="font-medium">{u.displayName}</p>
-                    <p className="text-xs text-white/45">{u.email}</p>
+                    <p className="text-xs text-muted-foreground">{u.email}</p>
                   </td>
-                  <td className="px-4 py-3 text-white/70">{u.storeName || '—'}</td>
+                  <td className="px-4 py-3 text-foreground/80">{u.storeName || '—'}</td>
                   <td className="px-4 py-3">
-                    <span className="badge badge-violet">{getRoleLabel(u.role)}</span>
+                    <span className="badge badge-instagram">{getRoleLabel(u.role)}</span>
                   </td>
                   <td className="px-4 py-3">
                     <select

@@ -35,7 +35,7 @@ export function GoogleOAuthSetupHelp({ context }: { context: 'login' | 'social' 
     >
       <p className="font-medium text-amber-200">
         Google error 400: redirect_uri_mismatch — add these in{' '}
-        <a className="underline text-violet-300" href={setup.consoleUrl} target="_blank" rel="noreferrer">
+        <a className="underline text-brand-instagram" href={setup.consoleUrl} target="_blank" rel="noreferrer">
           Google Cloud → Credentials → OAuth Web client
         </a>
       </p>

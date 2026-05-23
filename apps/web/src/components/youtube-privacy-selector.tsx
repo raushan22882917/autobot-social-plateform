@@ -24,7 +24,7 @@ export function YouTubePrivacySelector({
 }) {
   return (
     <motion.div layout className={compact ? 'space-y-2' : 'space-y-3'}>
-      <p className="text-xs font-medium text-violet-200">YouTube visibility</p>
+      <p className="text-xs font-medium text-brand-instagram">YouTube visibility</p>
       <div className="flex flex-wrap gap-2">
         {OPTIONS.map((opt) => (
           <button
@@ -34,7 +34,7 @@ export function YouTubePrivacySelector({
             onClick={() => onChange(opt.value)}
             className={`rounded-xl border px-3 py-2 text-left transition-colors ${
               value === opt.value
-                ? 'border-violet-400/60 bg-violet-500/25 text-violet-100'
+                ? 'border-brand-instagram/60 bg-brand-instagram/25 text-brand-instagram'
                 : 'border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${compact ? 'flex-1 min-w-[88px] px-2 py-1.5' : 'min-w-[100px]'}`}
           >

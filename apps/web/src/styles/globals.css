@@ -19,36 +19,36 @@
   --color-inverse-on-surface: #322f39;
   --color-outline: #958ea0;
   --color-outline-variant: #494454;
-  --color-surface-tint: #d0bcff;
+  --color-surface-tint: brand-instagram;
 
   /* Colors - Primary */
-  --color-primary: #d0bcff;
+  --color-primary: brand-instagram;
   --color-on-primary: #3c0091;
   --color-primary-container: #a078ff;
   --color-on-primary-container: #340080;
   --color-inverse-primary: #6d3bd7;
   --color-primary-fixed: #e9ddff;
-  --color-primary-fixed-dim: #d0bcff;
+  --color-primary-fixed-dim: brand-instagram;
   --color-on-primary-fixed: #23005c;
   --color-on-primary-fixed-variant: #5516be;
 
   /* Colors - Secondary */
-  --color-secondary: #4cd7f6;
+  --color-secondary: brand-facebook;
   --color-on-secondary: #003640;
   --color-secondary-container: #03b5d3;
   --color-on-secondary-container: #00424e;
   --color-secondary-fixed: #acedff;
-  --color-secondary-fixed-dim: #4cd7f6;
+  --color-secondary-fixed-dim: brand-facebook;
   --color-on-secondary-fixed: #001f26;
   --color-on-secondary-fixed-variant: #004e5c;
 
   /* Colors - Tertiary */
-  --color-tertiary: #4fdbc8;
+  --color-tertiary: brand-whatsapp;
   --color-on-tertiary: #003731;
   --color-tertiary-container: #00a392;
   --color-on-tertiary-container: #00302a;
   --color-tertiary-fixed: #71f8e4;
-  --color-tertiary-fixed-dim: #4fdbc8;
+  --color-tertiary-fixed-dim: brand-whatsapp;
   --color-on-tertiary-fixed: #00201c;
   --color-on-tertiary-fixed-variant: #005048;
 
@@ -64,8 +64,8 @@
   --color-surface-variant: #37333d;
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #d0bcff 0%, #6d3bd7 100%);
-  --gradient-accent: linear-gradient(135deg, #4cd7f6 0%, #4fdbc8 100%);
+  --gradient-primary: linear-gradient(135deg, brand-instagram 0%, #6d3bd7 100%);
+  --gradient-accent: linear-gradient(135deg, brand-facebook 0%, brand-whatsapp 100%);
   --gradient-violet-cyan: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%);
 
   /* Glass Effects */

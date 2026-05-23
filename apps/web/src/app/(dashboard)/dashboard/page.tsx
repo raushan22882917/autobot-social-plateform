@@ -12,8 +12,6 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import { apiClient } from '@/lib/api';
 import { canEditContent } from '@/lib/roles';
-import { N8nConnectionCard } from '@/components/dashboard/n8n-connection-card';
-
 const statusColor: Record<string, string> = {
   paid:       'badge badge-emerald',
   completed:  'badge badge-emerald',
@@ -24,11 +22,11 @@ const statusColor: Record<string, string> = {
 };
 
 const kpiDefs = [
-  { key: 'revenue',      label: 'Revenue',         icon: TrendingUp,     fmt: (v: number) => `₹${v.toLocaleString('en-IN')}`, color: 'text-emerald-400', bg: 'bg-emerald-500/15' },
-  { key: 'orders',       label: 'Orders',           icon: ShoppingCart,   fmt: (v: number) => v.toLocaleString(),               color: 'text-violet-400',  bg: 'bg-violet-500/15' },
-  { key: 'products',     label: 'Products',         icon: Package,        fmt: (v: number) => v.toLocaleString(),               color: 'text-cyan-400',    bg: 'bg-cyan-500/15' },
-  { key: 'leads',        label: 'Leads',            icon: Users,          fmt: (v: number) => v.toLocaleString(),               color: 'text-pink-400',    bg: 'bg-pink-500/15' },
-  { key: 'pendingPosts', label: 'Scheduled Posts',  icon: Calendar,       fmt: (v: number) => v.toLocaleString(),               color: 'text-amber-400',   bg: 'bg-amber-500/15' },
+  { key: 'revenue',      label: 'Revenue',         icon: TrendingUp,     fmt: (v: number) => `₹${v.toLocaleString('en-IN')}`, color: 'text-brand-whatsapp', bg: 'bg-brand-whatsapp/15' },
+  { key: 'orders',       label: 'Orders',           icon: ShoppingCart,   fmt: (v: number) => v.toLocaleString(),               color: 'text-brand-instagram',  bg: 'bg-brand-instagram/15' },
+  { key: 'products',     label: 'Products',         icon: Package,        fmt: (v: number) => v.toLocaleString(),               color: 'text-brand-facebook',    bg: 'bg-brand-facebook/15' },
+  { key: 'leads',        label: 'Leads',            icon: Users,          fmt: (v: number) => v.toLocaleString(),               color: 'text-brand-instagram',    bg: 'bg-brand-instagram/15' },
+  { key: 'pendingPosts', label: 'Scheduled Posts',  icon: Calendar,       fmt: (v: number) => v.toLocaleString(),               color: 'text-brand-google-yellow',   bg: 'bg-brand-google-yellow/15' },
   { key: 'engagement',   label: 'Engagements',      icon: MessageCircle,  fmt: (v: number) => v.toLocaleString(),               color: 'text-blue-400',    bg: 'bg-blue-500/15' },
 ];
 
@@ -56,8 +54,8 @@ function DashboardContent() {
 
       {/* Alerts */}
       {storage === 'memory' && (
-        <div className="flex items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 px-5 py-4">
-          <Zap className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+        <div className="flex items-start gap-3 rounded-2xl border border-brand-google-yellow/25 bg-amber-500/10 px-5 py-4">
+          <Zap className="mt-0.5 h-4 w-4 shrink-0 text-brand-google-yellow" />
           <div className="text-sm">
             <span className="font-semibold text-amber-300">Memory-only mode</span>
             <span className="text-amber-200/70"> — data resets when the API restarts. Add firebase credentials to persist.</span>
@@ -65,8 +63,8 @@ function DashboardContent() {
         </div>
       )}
       {accessDenied && (
-        <div className="flex items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 px-5 py-4">
-          <Activity className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+        <div className="flex items-start gap-3 rounded-2xl border border-brand-google-yellow/25 bg-amber-500/10 px-5 py-4">
+          <Activity className="mt-0.5 h-4 w-4 shrink-0 text-brand-google-yellow" />
           <span className="text-sm text-amber-200/80">You don't have permission to open that page. Contact your store owner or admin.</span>
         </div>
       )}
@@ -75,19 +73,19 @@ function DashboardContent() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <LayoutDashboard className="h-5 w-5 text-violet-400" />
-            <h1 className="text-2xl font-black text-white">Dashboard</h1>
+            <LayoutDashboard className="h-5 w-5 text-brand-instagram" />
+            <h1 className="text-2xl font-black text-foreground">Dashboard</h1>
           </div>
-          <p className="mt-1 text-sm text-white/50">
-            Welcome back, <span className="text-white/80 font-medium">{user?.displayName || 'Seller'}</span>
-            {user?.storeName && <span className="text-white/35"> · {user.storeName}</span>}
-            {(user?.role) && <span className="badge badge-violet ml-2">{user.role}</span>}
+          <p className="mt-1 text-sm text-muted-foreground">
+            Welcome back, <span className="text-foreground font-medium">{user?.displayName || 'Seller'}</span>
+            {user?.storeName && <span className="text-muted-foreground"> · {user.storeName}</span>}
+            {(user?.role) && <span className="badge badge-instagram ml-2">{user.role}</span>}
           </p>
         </div>
         {canEditContent(user?.role) && (
           <div className="flex shrink-0 gap-2">
             <Link href="/products"
-              className="flex items-center gap-1.5 rounded-xl border border-white/12 bg-white/[0.05] px-4 py-2 text-sm font-semibold text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+              className="flex items-center gap-1.5 rounded-xl border border-border bg-white/[0.05] px-4 py-2 text-sm font-semibold text-foreground/80 transition hover:bg-white/[0.09] hover:text-foreground"
             >
               <Plus className="h-3.5 w-3.5" /> Product
             </Link>
@@ -119,91 +117,86 @@ function DashboardContent() {
                   </div>
                 </div>
                 <div className={`text-2xl font-black ${k.color}`}>{k.fmt(val as number)}</div>
-                <div className="mt-1 text-xs text-white/40">{k.label}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{k.label}</div>
               </motion.div>
             );
           })}
         </motion.div>
       )}
 
-      {/* Mid row */}
-      <div className="grid gap-5 lg:grid-cols-2">
-        <N8nConnectionCard />
-
-        {/* Activity */}
-        <div className="glass-card p-5">
+      {/* Activity */}
+      <div className="glass-card p-5">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 font-bold text-white">
-              <Activity className="h-4 w-4 text-cyan-400" /> Recent Activity
+            <h2 className="flex items-center gap-2 font-bold text-foreground">
+              <Activity className="h-4 w-4 text-brand-facebook" /> Recent Activity
             </h2>
           </div>
           {loading ? (
             <div className="space-y-3">
-              {[...Array(4)].map((_, i) => <div key={i} className="h-12 animate-pulse rounded-xl bg-white/[0.04]" />)}
+              {[...Array(4)].map((_, i) => <div key={i} className="h-12 animate-pulse rounded-xl bg-brand-facebook/5" />)}
             </div>
           ) : data?.recentActivity?.length ? (
             <ul className="space-y-2">
               {data.recentActivity.slice(0, 5).map((a) => (
-                <li key={a.id} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-3 transition hover:bg-white/[0.04]">
-                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-violet-500/15 border border-violet-500/20">
-                    <Zap className="h-3.5 w-3.5 text-violet-400" />
+                <li key={a.id} className="flex items-start gap-3 rounded-xl border border-border bg-white/[0.02] p-3 transition hover:bg-brand-facebook/5">
+                  <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-instagram/15 border border-brand-instagram/20">
+                    <Zap className="h-3.5 w-3.5 text-brand-instagram" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white/85">{a.title}</p>
-                    <p className="mt-0.5 text-xs text-white/42">{a.body}</p>
+                    <p className="text-sm font-semibold text-foreground">{a.title}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">{a.body}</p>
                   </div>
-                  <time className="shrink-0 text-xs text-white/30">{new Date(a.createdAt).toLocaleDateString('en-IN')}</time>
+                  <time className="shrink-0 text-xs text-muted-foreground">{new Date(a.createdAt).toLocaleDateString('en-IN')}</time>
                 </li>
               ))}
             </ul>
           ) : (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <Activity className="mb-3 h-8 w-8 text-white/15" />
-              <p className="text-sm text-white/35">No recent activity yet</p>
-              <p className="mt-1 text-xs text-white/22">Activity will appear here as your store gets orders and engagement</p>
+              <Activity className="mb-3 h-8 w-8 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">No recent activity yet</p>
+              <p className="mt-1 text-xs text-muted-foreground">Activity will appear here as your store gets orders and engagement</p>
             </div>
           )}
-        </div>
       </div>
 
       {/* Recent orders */}
       {(loading || data?.recentOrders?.length) ? (
         <div className="glass-card overflow-hidden">
-          <div className="flex items-center justify-between border-b border-white/[0.07] px-6 py-4">
-            <h2 className="flex items-center gap-2 font-bold text-white">
-              <ShoppingCart className="h-4 w-4 text-emerald-400" /> Recent Orders
+          <div className="flex items-center justify-between border-b border-border px-6 py-4">
+            <h2 className="flex items-center gap-2 font-bold text-foreground">
+              <ShoppingCart className="h-4 w-4 text-brand-whatsapp" /> Recent Orders
             </h2>
-            <Link href="/orders" className="flex items-center gap-1 text-xs font-semibold text-violet-400 hover:text-violet-300 transition">
+            <Link href="/orders" className="flex items-center gap-1 text-xs font-semibold text-brand-instagram hover:text-brand-instagram transition">
               View all <ExternalLink className="h-3 w-3" />
             </Link>
           </div>
 
           {loading ? (
             <div className="space-y-2 p-4">
-              {[...Array(3)].map((_, i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-white/[0.04]" />)}
+              {[...Array(3)].map((_, i) => <div key={i} className="h-14 animate-pulse rounded-xl bg-brand-facebook/5" />)}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/[0.06] text-left">
-                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white/35">Order</th>
-                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white/35">Customer</th>
-                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white/35">Total</th>
-                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white/35">Status</th>
-                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-white/35">Date</th>
+                  <tr className="border-b border-border text-left">
+                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Order</th>
+                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Customer</th>
+                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total</th>
+                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</th>
+                    <th className="px-6 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.05]">
                   {data?.recentOrders?.map((o) => (
                     <tr key={o.id} className="transition hover:bg-white/[0.025]">
-                      <td className="px-6 py-4 font-semibold text-white/85">{o.orderNumber}</td>
-                      <td className="px-6 py-4 text-white/55">{o.customer?.name || '—'}</td>
-                      <td className="px-6 py-4 font-bold text-emerald-400">₹{o.total?.toLocaleString('en-IN')}</td>
+                      <td className="px-6 py-4 font-semibold text-foreground">{o.orderNumber}</td>
+                      <td className="px-6 py-4 text-muted-foreground">{o.customer?.name || '—'}</td>
+                      <td className="px-6 py-4 font-bold text-brand-whatsapp">₹{o.total?.toLocaleString('en-IN')}</td>
                       <td className="px-6 py-4">
-                        <span className={statusColor[o.status] || 'badge badge-violet'}>{o.status}</span>
+                        <span className={statusColor[o.status] || 'badge badge-instagram'}>{o.status}</span>
                       </td>
-                      <td className="px-6 py-4 text-white/38">{new Date(o.createdAt).toLocaleDateString('en-IN')}</td>
+                      <td className="px-6 py-4 text-muted-foreground">{new Date(o.createdAt).toLocaleDateString('en-IN')}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -220,7 +213,7 @@ export default function DashboardPage() {
   return (
     <Suspense fallback={
       <div className="space-y-6">
-        <div className="h-8 w-48 animate-pulse rounded-xl bg-white/[0.06]" />
+        <div className="h-8 w-48 animate-pulse rounded-xl bg-brand-facebook/8" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
           {[...Array(6)].map((_, i) => <div key={i} className="metric-card h-28 animate-pulse" />)}
         </div>

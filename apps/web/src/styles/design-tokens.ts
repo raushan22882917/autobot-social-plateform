@@ -1,83 +1,80 @@
 /**
- * Synthetic Transcendence Design System
- * High-performance SaaS design tokens for AutoBot360
+ * Social platform brand design tokens for AutoBot360
  */
 
 export const colors = {
-  // Surface Colors
-  surface: '#15121b',
-  surfaceDim: '#15121b',
-  surfaceBright: '#3b3742',
-  surfaceContainerLowest: '#0f0d15',
-  surfaceContainerLow: '#1d1a23',
-  surfaceContainer: '#211e27',
-  surfaceContainerHigh: '#2c2832',
-  surfaceContainerHighest: '#37333d',
-  onSurface: '#e7e0ed',
-  onSurfaceVariant: '#cbc3d7',
-  inverseSurface: '#e7e0ed',
-  inverseOnSurface: '#322f39',
-  outline: '#958ea0',
-  outlineVariant: '#494454',
-  surfaceTint: '#d0bcff',
+  // Canvas
+  background: '#ffffff',
+  onBackground: '#1a2b42',
 
-  // Primary Colors
-  primary: '#d0bcff',
-  onPrimary: '#3c0091',
-  primaryContainer: '#a078ff',
-  onPrimaryContainer: '#340080',
-  inversePrimary: '#6d3bd7',
-  primaryFixed: '#e9ddff',
-  primaryFixedDim: '#d0bcff',
-  onPrimaryFixed: '#23005c',
-  onPrimaryFixedVariant: '#5516be',
+  // Surfaces (light)
+  surface: '#ffffff',
+  surfaceDim: '#f8f9fc',
+  surfaceBright: '#eef3fb',
+  surfaceContainerLowest: '#ffffff',
+  surfaceContainerLow: '#f8f9fc',
+  surfaceContainer: '#f8f9fc',
+  surfaceContainerHigh: '#eef3fb',
+  surfaceContainerHighest: '#e8eef8',
+  onSurface: '#1a2b42',
+  onSurfaceVariant: '#5a6b82',
+  outline: '#1877F2',
+  outlineVariant: 'rgba(24, 119, 242, 0.2)',
 
-  // Secondary Colors
-  secondary: '#4cd7f6',
-  onSecondary: '#003640',
-  secondaryContainer: '#03b5d3',
-  onSecondaryContainer: '#00424e',
-  secondaryFixed: '#acedff',
-  secondaryFixedDim: '#4cd7f6',
-  onSecondaryFixed: '#001f26',
-  onSecondaryFixedVariant: '#004e5c',
+  // Primary — Instagram
+  primary: '#E4405F',
+  onPrimary: '#ffffff',
+  primaryContainer: '#fce4ec',
+  onPrimaryContainer: '#833AB4',
 
-  // Tertiary Colors
-  tertiary: '#4fdbc8',
-  onTertiary: '#003731',
-  tertiaryContainer: '#00a392',
-  onTertiaryContainer: '#00302a',
-  tertiaryFixed: '#71f8e4',
-  tertiaryFixedDim: '#4fdbc8',
-  onTertiaryFixed: '#00201c',
-  onTertiaryFixedVariant: '#005048',
+  // Secondary — Facebook
+  secondary: '#1877F2',
+  onSecondary: '#ffffff',
+  secondaryContainer: '#e8f1fe',
+  onSecondaryContainer: '#0d65d9',
 
-  // Error Colors
-  error: '#ffb4ab',
-  onError: '#690005',
-  errorContainer: '#93000a',
-  onErrorContainer: '#ffdad6',
+  // Tertiary — WhatsApp
+  tertiary: '#25D366',
+  onTertiary: '#ffffff',
+  tertiaryContainer: '#e6f9ee',
+  onTertiaryContainer: '#128C7E',
 
-  // Background
-  background: '#15121b',
-  onBackground: '#e7e0ed',
-  surfaceVariant: '#37333d',
+  // Error — YouTube red
+  error: '#FF0000',
+  onError: '#ffffff',
+  errorContainer: '#ffe5e5',
+  onErrorContainer: '#CC0000',
+
+  // Platform brands
+  instagram: '#E4405F',
+  instagramPurple: '#833AB4',
+  instagramPink: '#E1306C',
+  instagramOrange: '#F77737',
+  facebook: '#1877F2',
+  whatsapp: '#25D366',
+  youtube: '#FF0000',
+  googleBlue: '#4285F4',
+  googleRed: '#EA4335',
+  googleYellow: '#FBBC05',
+  googleGreen: '#34A853',
 
   // Gradients
-  gradientPrimary: 'linear-gradient(135deg, #d0bcff 0%, #6d3bd7 100%)',
-  gradientAccent: 'linear-gradient(135deg, #4cd7f6 0%, #4fdbc8 100%)',
-  gradientVioletCyan: 'linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%)',
+  gradientPrimary: 'linear-gradient(135deg, #833AB4 0%, #E1306C 45%, #F77737 100%)',
+  gradientInstagram: 'linear-gradient(135deg, #833AB4 0%, #E1306C 45%, #F77737 100%)',
+  gradientGoogle: 'linear-gradient(135deg, #4285F4, #EA4335, #FBBC05, #34A853)',
+  gradientFacebook: 'linear-gradient(135deg, #1877F2 0%, #0d65d9 100%)',
+  gradientWhatsApp: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
 
-  // Glass Effects
-  glassLight: 'rgba(255, 255, 255, 0.05)',
-  glassBorder: 'rgba(255, 255, 255, 0.1)',
-  glassGlow: 'rgba(139, 92, 246, 0.15)',
+  // Glass (light)
+  glassLight: 'rgba(255, 255, 255, 0.9)',
+  glassBorder: 'rgba(24, 119, 242, 0.12)',
+  glassGlow: 'rgba(228, 64, 95, 0.12)',
 
   // Semantic
-  success: '#4fdbc8',
-  warning: '#ffb4ab',
-  info: '#4cd7f6',
-  danger: '#ffb4ab',
+  success: '#25D366',
+  warning: '#FBBC05',
+  info: '#1877F2',
+  danger: '#FF0000',
 };
 
 export const typography = {
@@ -156,13 +153,13 @@ export const spacing = {
 };
 
 export const shadows = {
-  glow: '0 0 40px rgba(139, 92, 246, 0.15)',
-  glowAccent: '0 0 40px rgba(76, 215, 246, 0.15)',
-  glowTertiary: '0 0 40px rgba(79, 219, 200, 0.15)',
+  glow: '0 0 40px rgba(228, 64, 95, 0.12)',
+  glowAccent: '0 0 40px rgba(24, 119, 242, 0.12)',
+  glowTertiary: '0 0 40px rgba(37, 211, 102, 0.12)',
   sm: '0 1px 2px rgba(0, 0, 0, 0.05)',
-  md: '0 4px 6px rgba(0, 0, 0, 0.1)',
-  lg: '0 10px 15px rgba(0, 0, 0, 0.1)',
-  xl: '0 20px 25px rgba(0, 0, 0, 0.1)',
+  md: '0 4px 6px rgba(24, 119, 242, 0.08)',
+  lg: '0 10px 15px rgba(24, 119, 242, 0.1)',
+  xl: '0 20px 25px rgba(24, 119, 242, 0.12)',
 };
 
 export const transitions = {

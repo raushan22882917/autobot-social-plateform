@@ -7,7 +7,7 @@ import { apiClient, Order } from '@/lib/api';
 import { PageHeader, DataToolbar, DataTable, StatusBadge, EmptyState, type Column } from '@/components/data';
 import { useListControls } from '@/hooks/use-list-controls';
 
-const STATUSES = ['confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
+const STATUSES = ['pending_payment', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
 
 export default function OrdersPage() {
   const { token } = useAuth();
@@ -56,6 +56,14 @@ export default function OrdersPage() {
         <div>
           <p>{o.customer?.name || '—'}</p>
           {o.customer?.email && <p className="text-xs text-muted-foreground">{o.customer.email}</p>}
+          {(o.customer?.platform || o.platform) && (
+            <p className="text-xs text-muted-foreground capitalize">
+              via {(o.customer?.platform || o.platform) as string}
+              {o.source === 'product_analysis' || o.source === 'product_analysis_auto'
+                ? ' · Product Analysis'
+                : ''}
+            </p>
+          )}
         </div>
       ),
     },
@@ -119,7 +127,7 @@ export default function OrdersPage() {
         page={list.page}
         totalPages={list.totalPages}
         onPageChange={list.setPage}
-        extra={<button type="button" onClick={load} className="text-xs text-violet-400 hover:underline">Refresh</button>}
+        extra={<button type="button" onClick={load} className="text-xs text-brand-instagram hover:underline">Refresh</button>}
       />
 
       {!loading && orders.length === 0 ? (

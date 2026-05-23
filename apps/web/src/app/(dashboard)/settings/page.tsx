@@ -33,12 +33,12 @@ export default function SettingsPage() {
         </div>
         <div><p className="text-sm text-muted-foreground">Tenant ID</p><p className="font-mono text-xs text-muted-foreground">{user?.tenantId}</p></div>
         {isOwner(user?.role) && (
-          <Link href="/team" className="inline-flex text-sm font-medium text-violet-400 hover:text-violet-300">
+          <Link href="/team" className="inline-flex text-sm font-medium text-brand-instagram hover:text-brand-instagram">
             Manage team →
           </Link>
         )}
         {isSuperAdmin(user?.role) && (
-          <Link href="/admin" className="inline-flex text-sm font-medium text-cyan-400 hover:text-cyan-300">
+          <Link href="/admin" className="inline-flex text-sm font-medium text-brand-facebook hover:text-cyan-300">
             Platform admin →
           </Link>
         )}

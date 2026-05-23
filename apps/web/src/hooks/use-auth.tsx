@@ -1,8 +1,7 @@
 'use client';
 
-
 import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from 'react';
-import { usePathname, useSearchParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -20,7 +19,6 @@ interface AuthContextValue {
   user: User | null;
   token: string | null;
   loading: boolean;
-  authMode: 'firebase' | 'dev';
   login: (email: string, password: string) => Promise<void>;
   signup: (data: { email: string; password: string; displayName?: string; storeName: string }) => Promise<void>;
   loginWithGoogle: (extras?: { displayName?: string; storeName?: string }) => Promise<void>;
@@ -34,6 +32,19 @@ const TOKEN_KEY = 'autobot360_token';
 const USER_KEY = 'autobot360_user';
 const SIGNUP_EXTRAS_KEY = 'autobot360_signup_extras';
 
+function requireFirebaseClient(): NonNullable<ReturnType<typeof getFirebaseAuth>> {
+  if (!isFirebaseConfigured()) {
+    throw new Error(
+      'Firebase is not configured. Add NEXT_PUBLIC_FIREBASE_* to apps/web/.env.local (see docs/FIREBASE_QUICKSTART.md).'
+    );
+  }
+  const auth = getFirebaseAuth();
+  if (!auth) {
+    throw new Error('Firebase Auth failed to initialize.');
+  }
+  return auth;
+}
+
 function normalizeUser(user: User): User {
   return {
     ...user,
@@ -46,22 +57,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [authMode, setAuthMode] = useState<'firebase' | 'dev'>(() =>
-    isFirebaseConfigured() ? 'firebase' : 'dev'
-  );
-
-  useEffect(() => {
-    apiClient
-      .getAuthConfig()
-      .then((cfg) => {
-        if (cfg.mode === 'firebase' || cfg.mode === 'firebase-dev') {
-          if (isFirebaseConfigured()) setAuthMode('firebase');
-        } else if (cfg.devStore) {
-          setAuthMode('dev');
-        }
-      })
-      .catch(() => {});
-  }, []);
   const router = useRouter();
 
   const persist = useCallback((res: AuthResponse) => {
@@ -130,9 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const hasApiToken = localStorage.getItem(TOKEN_KEY);
-
-      if (hasApiToken) {
+      if (localStorage.getItem(TOKEN_KEY)) {
         setLoading(false);
         return;
       }
@@ -144,7 +137,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           sessionStorage.removeItem(SIGNUP_EXTRAS_KEY);
           await exchangeFirebaseToken(firebaseUser, extras);
         } catch {
-          /* signup/login handler will surface errors */
+          /* handler surfaces errors */
         }
       }
 
@@ -156,20 +149,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      const auth = getFirebaseAuth();
-      let role: string = 'owner';
-      if (auth && authMode === 'firebase') {
-        const cred = await signInWithEmailAndPassword(auth, email, password);
-        const res = await exchangeFirebaseToken(cred.user);
-        role = res.user.role;
-      } else {
-        const res = await apiClient.login({ email, password });
-        persist(res);
-        role = res.user.role;
-      }
-      router.push(getDefaultRoute(role));
+      const auth = requireFirebaseClient();
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const res = await exchangeFirebaseToken(cred.user);
+      router.push(getDefaultRoute(res.user.role));
     },
-    [authMode, exchangeFirebaseToken, persist, router]
+    [exchangeFirebaseToken, router]
   );
 
   const signup = useCallback(
@@ -183,33 +168,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         storeName: data.storeName.trim(),
       };
 
-      const auth = getFirebaseAuth();
-      let role = 'owner';
-      if (auth && authMode === 'firebase') {
-        sessionStorage.setItem(SIGNUP_EXTRAS_KEY, JSON.stringify(extras));
-        const cred = await createUserWithEmailAndPassword(auth, data.email, data.password);
-        sessionStorage.removeItem(SIGNUP_EXTRAS_KEY);
-        const res = await exchangeFirebaseToken(cred.user, extras);
-        role = res.user.role;
-      } else {
-        const res = await apiClient.signup({
-          email: data.email,
-          password: data.password,
-          displayName: extras.displayName,
-          storeName: extras.storeName,
-        });
-        persist(res);
-        role = res.user.role;
-      }
-      router.push(getDefaultRoute(role));
+      const auth = requireFirebaseClient();
+      sessionStorage.setItem(SIGNUP_EXTRAS_KEY, JSON.stringify(extras));
+      const cred = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      sessionStorage.removeItem(SIGNUP_EXTRAS_KEY);
+      const res = await exchangeFirebaseToken(cred.user, extras);
+      router.push(getDefaultRoute(res.user.role));
     },
-    [authMode, exchangeFirebaseToken, persist, router]
+    [exchangeFirebaseToken, router]
   );
 
   const loginWithGoogle = useCallback(
     async (extras?: { displayName?: string; storeName?: string }) => {
-      const auth = getFirebaseAuth();
-      if (!auth) throw new Error('Firebase is not configured');
+      const auth = requireFirebaseClient();
 
       if (extras?.storeName) {
         sessionStorage.setItem(SIGNUP_EXTRAS_KEY, JSON.stringify(extras));
@@ -241,7 +212,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, authMode, login, signup, loginWithGoogle, logout, refreshUser }}
+      value={{ user, token, loading, login, signup, loginWithGoogle, logout, refreshUser }}
     >
       {children}
     </AuthContext.Provider>

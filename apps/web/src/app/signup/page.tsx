@@ -7,6 +7,7 @@ import { Bot, ArrowRight, Eye, EyeOff, CheckCircle2, Store } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import { GoogleOAuthSetupHelp } from '@/components/google-oauth-setup-help';
+import { FirebaseSetupBanner } from '@/components/firebase-setup-banner';
 
 const perks = [
   'AI-powered post scheduling',
@@ -14,11 +15,11 @@ const perks = [
   'Razorpay social checkout',
   'WhatsApp order notifications',
   'Analytics & AI insights',
-  'n8n workflow automation',
+  'Automated post scheduling',
 ];
 
 export default function SignupPage() {
-  const { signup, loginWithGoogle, authMode } = useAuth();
+  const { signup, loginWithGoogle } = useAuth();
   const [form, setForm] = useState({ email: '', password: '', displayName: '', storeName: '' });
   const [showPwd, setShowPwd]   = useState(false);
   const [error, setError]       = useState('');
@@ -69,12 +70,12 @@ export default function SignupPage() {
             alt="Social selling"
             className="h-full w-full object-cover opacity-25"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-950/95 via-[#060a12]/90 to-[#060a12]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#833AB4]/90 via-[#E4405F]/85 to-[#1877F2]/80" />
         </div>
 
         <div className="relative flex flex-1 flex-col p-10">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 shadow-lg shadow-violet-900/50">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#833AB4] via-[#E4405F] to-[#F77737] shadow-lg shadow-brand-instagram/30">
               <Bot className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold gradient-text">AutoBot360</span>
@@ -84,46 +85,47 @@ export default function SignupPage() {
             <h2 className="text-4xl font-black leading-tight text-white">
               Start selling smarter<br />today. For free.
             </h2>
-            <p className="mt-4 text-white/50 leading-relaxed">
+            <p className="mt-4 text-muted-foreground leading-relaxed">
               Everything you need to automate your social commerce. No credit card required.
             </p>
 
             <div className="mt-8 space-y-3">
               {perks.map((p) => (
                 <div key={p} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
-                  <span className="text-sm text-white/65">{p}</span>
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-whatsapp" />
+                  <span className="text-sm text-muted-foreground">{p}</span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-10 rounded-2xl border border-violet-500/20 bg-violet-500/10 p-5">
-              <p className="text-sm font-semibold text-violet-300">14-day free trial</p>
-              <p className="mt-1 text-xs text-white/45">Full access to all Pro features. No credit card needed. Cancel anytime.</p>
+            <div className="mt-10 rounded-2xl border border-white/30 bg-white/15 p-5 backdrop-blur-sm">
+              <p className="text-sm font-semibold text-brand-instagram">14-day free trial</p>
+              <p className="mt-1 text-xs text-muted-foreground">Full access to all Pro features. No credit card needed. Cancel anytime.</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right form panel */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 lg:px-16">
+      <div className="flex flex-1 flex-col items-center justify-center bg-white px-6 py-12 lg:px-16">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-md">
 
           <div className="mb-8 flex items-center gap-2 lg:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-purple-700">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#833AB4] via-[#E4405F] to-[#F77737]">
               <Bot className="h-4 w-4 text-white" />
             </div>
             <span className="text-xl font-bold gradient-text">AutoBot360</span>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-white">Create your store</h1>
-            <p className="mt-2 text-white/50">Start your 14-day free trial. No credit card required.</p>
-            {authMode === 'dev' && (
-              <span className="badge badge-amber mt-3 inline-flex">Dev Auth Mode</span>
+            <h1 className="text-3xl font-black text-foreground">Create your store</h1>
+            <p className="mt-2 text-muted-foreground">Start your 14-day free trial. No credit card required.</p>
+            {firebaseEnabled && (
+              <span className="badge badge-instagram mt-3 inline-flex">Firebase auth</span>
             )}
           </div>
 
+          <FirebaseSetupBanner />
           {firebaseEnabled && <GoogleOAuthSetupHelp context="login" />}
 
           {error && (
@@ -134,11 +136,11 @@ export default function SignupPage() {
 
           {/* Store name first */}
           <div className="mb-4">
-            <label className="mb-1.5 block text-sm font-semibold text-white/70">
-              Store name <span className="text-violet-400">*</span>
+            <label className="mb-1.5 block text-sm font-semibold text-foreground/80">
+              Store name <span className="text-brand-instagram">*</span>
             </label>
             <div className="relative">
-              <Store className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+              <Store className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text" value={form.storeName} onChange={set('storeName')}
                 placeholder="My Awesome Store" required
@@ -151,7 +153,7 @@ export default function SignupPage() {
             <>
               <button
                 type="button" onClick={handleGoogle} disabled={loading}
-                className="mb-5 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/[0.05] py-3 text-sm font-semibold text-white/80 transition hover:bg-white/[0.09] hover:border-white/25 hover:text-white disabled:opacity-50"
+                className="mb-5 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/[0.05] py-3 text-sm font-semibold text-foreground transition hover:bg-white/[0.09] hover:border-white/25 hover:text-foreground disabled:opacity-50"
               >
                 <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -164,7 +166,7 @@ export default function SignupPage() {
               <div className="relative mb-5">
                 <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10" /></div>
                 <div className="relative flex justify-center">
-                  <span className="bg-[#060a12] px-4 text-xs text-white/35 uppercase tracking-wider">or with email</span>
+                  <span className="bg-white px-4 text-xs text-muted-foreground uppercase tracking-wider">or with email</span>
                 </div>
               </div>
             </>
@@ -172,7 +174,7 @@ export default function SignupPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-white/70">Display name</label>
+              <label className="mb-1.5 block text-sm font-semibold text-foreground/80">Display name</label>
               <input
                 type="text" value={form.displayName} onChange={set('displayName')}
                 placeholder="Jane Doe"
@@ -180,8 +182,8 @@ export default function SignupPage() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-white/70">
-                Email address <span className="text-violet-400">*</span>
+              <label className="mb-1.5 block text-sm font-semibold text-foreground/80">
+                Email address <span className="text-brand-instagram">*</span>
               </label>
               <input
                 type="email" value={form.email} onChange={set('email')}
@@ -190,8 +192,8 @@ export default function SignupPage() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-white/70">
-                Password <span className="text-violet-400">*</span>
+              <label className="mb-1.5 block text-sm font-semibold text-foreground/80">
+                Password <span className="text-brand-instagram">*</span>
               </label>
               <div className="relative">
                 <input
@@ -200,7 +202,7 @@ export default function SignupPage() {
                   className="field-input pr-12"
                 />
                 <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/35 hover:text-white/65 transition">
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition">
                   {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -219,16 +221,16 @@ export default function SignupPage() {
               )}
             </button>
 
-            <p className="text-center text-xs text-white/30">
+            <p className="text-center text-xs text-muted-foreground">
               By signing up you agree to our{' '}
-              <a href="#" className="text-violet-400 hover:underline">Terms</a> and{' '}
-              <a href="#" className="text-violet-400 hover:underline">Privacy Policy</a>.
+              <a href="#" className="text-brand-instagram hover:underline">Terms</a> and{' '}
+              <a href="#" className="text-brand-instagram hover:underline">Privacy Policy</a>.
             </p>
           </form>
 
-          <p className="mt-6 text-center text-sm text-white/40">
+          <p className="mt-6 text-center text-sm text-muted-foreground">
             Already have an account?{' '}
-            <Link href="/login" className="font-semibold text-violet-400 hover:text-violet-300 transition">Sign in</Link>
+            <Link href="/login" className="font-semibold text-brand-instagram hover:text-brand-instagram transition">Sign in</Link>
           </p>
         </motion.div>
       </div>

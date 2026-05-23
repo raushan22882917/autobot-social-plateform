@@ -60,7 +60,7 @@ export function DataTable<T>({
     <motion.div layout className="glass-card overflow-x-auto">
       <table className="w-full min-w-[640px] text-sm">
         <thead>
-          <tr className="border-b border-white/10 bg-white/[0.03] text-left text-xs uppercase tracking-wide text-muted-foreground">
+          <tr className="border-b border-white/10 bg-muted text-left text-xs uppercase tracking-wide text-muted-foreground">
             {columns.map((col) => (
               <th key={col.key} className={cn('px-4 py-3 font-medium', col.className)}>
                 {col.sortable && onSort ? (
@@ -92,7 +92,7 @@ export function DataTable<T>({
             <tr
               key={rowKey(row)}
               className={cn(
-                'border-b border-white/5 transition-colors hover:bg-white/[0.04]',
+                'border-b border-white/5 transition-colors hover:bg-brand-facebook/5',
                 onRowClick && 'cursor-pointer'
               )}
               onClick={onRowClick ? () => onRowClick(row) : undefined}

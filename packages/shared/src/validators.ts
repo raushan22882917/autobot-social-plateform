@@ -18,7 +18,7 @@ export const youtubePrivacySchema = z.enum(['private', 'unlisted', 'public']);
 
 export const schedulePostSchema = z.object({
   productId: z.string().min(1),
-  platforms: z.array(z.enum(['instagram', 'facebook', 'youtube', 'tiktok'])).min(1),
+  platforms: z.array(z.enum(['instagram', 'facebook', 'youtube', 'whatsapp'])).min(1),
   socialAccountIds: z.array(z.string()).default([]),
   scheduledAt: z.string().datetime(),
   useAiCaption: z.boolean().default(true),

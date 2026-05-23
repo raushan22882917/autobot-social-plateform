@@ -56,11 +56,6 @@ export function canManagePayments(role?: string | null): boolean {
   return r === 'superadmin' || r === 'owner';
 }
 
-export function canManageN8n(role?: string | null): boolean {
-  const r = normalizeRole(role);
-  return r === 'superadmin' || r === 'owner';
-}
-
 export interface NavItemDef {
   label: string;
   href: string;

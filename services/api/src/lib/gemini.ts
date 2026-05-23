@@ -28,11 +28,11 @@ export interface StudioGenerateResult {
   raw?: string;
 }
 
-const DEFAULT_MODEL = 'gemini-2.5-flash';
+const DEFAULT_MODEL = 'gemini-3.5-flash';
 
 function getModelCandidates(): string[] {
   const preferred = process.env.GEMINI_MODEL || DEFAULT_MODEL;
-  const fallbacks = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
+  const fallbacks = ['gemini-3.5-flash', 'gemini-2.5-flash', 'gemini-2.5-flash-lite'];
   return [...new Set([preferred, ...fallbacks])];
 }
 

@@ -22,10 +22,10 @@ export function KPICard({ title, value, change, icon: Icon }: KPICardProps) {
     >
       <div className="flex items-center justify-between">
         <span className="text-xs font-medium text-muted-foreground">{title}</span>
-        <Icon className="h-4 w-4 text-violet-400" />
+        <Icon className="h-4 w-4 text-brand-instagram" />
       </div>
       <p className="mt-2 text-2xl font-bold">{value}</p>
-      <p className={cn('mt-1 text-xs', positive ? 'text-emerald-400' : 'text-red-400')}>
+      <p className={cn('mt-1 text-xs', positive ? 'text-brand-whatsapp' : 'text-red-400')}>
         {positive ? '+' : ''}{change}% vs last period
       </p>
     </motion.div>

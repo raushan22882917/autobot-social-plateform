@@ -31,7 +31,7 @@ internalRouter.post('/pubsub/publish', async (req, res, next) => {
   try {
     const { eventType, tenantId, payload, idempotencyKey } = req.body;
     const topic = `autobot360.${eventType}`;
-    await publishEvent(topic, { eventType, tenantId, idempotencyKey, payload, metadata: { source: 'n8n' } });
+    await publishEvent(topic, { eventType, tenantId, idempotencyKey, payload, metadata: { source: 'internal' } });
 
     if (eventType === 'payment.success' && payload?.paymentId) {
       await createOrderFromPayment(payload.paymentId);

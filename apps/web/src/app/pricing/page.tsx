@@ -16,7 +16,7 @@ const plans = [
     price: '₹2,999',
     period: '/month',
     popular: true,
-    features: ['50 products', 'Unlimited scheduled posts', 'AI auto-replies (advanced)', 'All payment gateways', 'WhatsApp notifications', 'n8n automation', 'Analytics & insights'],
+    features: ['50 products', 'Unlimited scheduled posts', 'AI auto-replies (advanced)', 'All payment gateways', 'WhatsApp notifications', 'Direct social publishing', 'Analytics & insights'],
   },
   {
     name: 'Enterprise',
@@ -50,10 +50,10 @@ export default function PricingPage() {
                 key={plan.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`glass-card p-8 ${plan.popular ? 'ring-2 ring-violet-500/50' : ''}`}
+                className={`glass-card p-8 ${plan.popular ? 'ring-2 ring-brand-instagram/50' : ''}`}
               >
                 {plan.popular && (
-                  <span className="mb-4 inline-block rounded-full bg-violet-500/20 px-3 py-1 text-xs font-medium text-violet-300">
+                  <span className="mb-4 inline-block rounded-full bg-brand-instagram/15 px-3 py-1 text-xs font-medium text-brand-instagram">
                     Most Popular
                   </span>
                 )}
@@ -63,13 +63,13 @@ export default function PricingPage() {
                 <ul className="mt-6 space-y-3">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-center gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0" />
+                      <CheckCircle className="h-4 w-4 text-brand-whatsapp shrink-0" />
                       {f}
                     </li>
                   ))}
                 </ul>
 
-                <Link href="/signup" className={`mt-8 block w-full rounded-xl py-3 text-center text-sm font-medium transition ${plan.popular ? 'bg-violet-600 text-white hover:bg-violet-500' : 'border border-white/20 hover:bg-white/5'}`}>
+                <Link href="/signup" className={`mt-8 block w-full rounded-xl py-3 text-center text-sm font-medium transition ${plan.popular ? 'bg-brand-instagram text-white hover:bg-brand-instagram' : 'border border-white/20 hover:bg-white/5'}`}>
                   Get started
                 </Link>
               </motion.div>

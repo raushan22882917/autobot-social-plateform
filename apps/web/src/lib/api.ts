@@ -49,6 +49,18 @@ export interface AuthResponse {
   expiresIn: number;
 }
 
+export interface SocialAccount {
+  id: string;
+  platform: string;
+  username: string;
+  displayName?: string;
+  status: string;
+  profilePictureUrl?: string;
+  connectedAt?: string;
+  tokenExpiresAt?: string;
+  scopes?: string[];
+}
+
 export interface Product {
   id: string;
   title: string;
@@ -78,8 +90,8 @@ export interface ProductReceptionReport {
   score: number;
   verdict: 'good' | 'mixed' | 'needs_attention';
   summary: string;
-  strengths: string[];
-  concerns: string[];
+  strengths?: string[];
+  concerns?: string[];
 }
 
 export interface ProductCommentRecord {
@@ -115,7 +127,7 @@ export interface ProductSavedAnalysis {
   totalComments: number;
   sentiment: { positive: number; neutral: number; negative: number };
   productReception?: ProductReceptionReport;
-  insights: Array<{
+  insights?: Array<{
     commentId: string;
     postId?: string;
     author?: string;
@@ -156,8 +168,23 @@ export interface Order {
   orderNumber: string;
   total: number;
   status: string;
-  customer: { name: string; email?: string };
+  customer: { name: string; email?: string; phone?: string; platform?: string; commentId?: string };
+  source?: string;
+  platform?: string;
   createdAt: string;
+}
+
+export interface CheckoutSession {
+  id: string;
+  tenantId: string;
+  total: number;
+  subtotal?: number;
+  tax?: number;
+  currency?: string;
+  status: string;
+  items?: { title?: string; quantity?: number; price?: number }[];
+  customer?: { name?: string; email?: string; phone?: string };
+  source?: string;
 }
 
 export const apiClient = {
@@ -182,36 +209,10 @@ export const apiClient = {
   getDashboard: (token: string) =>
     api<{
       user?: { role: string; tenantId: string };
-      n8n?: { connected: boolean; status: string };
       kpis: { products: number; orders: number; pendingPosts: number; leads: number; revenue: number; engagement: number };
       recentActivity: { id: string; title: string; body: string; createdAt: string }[];
       recentOrders: Order[];
     }>('/dashboard', { token }),
-
-  getN8nStatus: (token: string) =>
-    api<{
-      connected: boolean;
-      connection: {
-        status: string;
-        mode: string;
-        n8nBaseUrl: string;
-        webhooksRegistered: boolean;
-        webhookSecretPreview: string | null;
-        lastError?: string;
-      } | null;
-      user: { role: string; tenantId: string };
-      platform: { n8nBaseUrl: string };
-    }>('/integrations/n8n', { token }),
-
-  connectN8n: (token: string, data?: { n8nBaseUrl?: string; n8nApiKey?: string }) =>
-    api<{ success: boolean; message: string; webhookSecret?: string }>('/integrations/n8n/connect', {
-      method: 'POST',
-      token,
-      body: JSON.stringify(data || {}),
-    }),
-
-  disconnectN8n: (token: string) =>
-    api('/integrations/n8n', { method: 'DELETE', token }),
 
   getProducts: (token: string) => api<{ products: Product[] }>('/products', { token }),
 
@@ -366,6 +367,9 @@ export const apiClient = {
         summary: string;
         productReception?: ProductReceptionReport;
       }>;
+      platformErrors?: Array<{ platform: string; postId?: string; error: string }>;
+      automation?: { liveSyncAvailable?: boolean };
+      product?: { lastSyncedAt?: string };
     }>(`/products/${productId}/analysis`, { token }),
 
   analyzeProductComments: (token: string, productId: string, options?: { autoReply?: boolean }) =>
@@ -373,6 +377,48 @@ export const apiClient = {
       method: 'POST',
       token,
       body: JSON.stringify({ autoReply: options?.autoReply !== false }),
+    }),
+
+  syncProductAnalysis: (
+    token: string,
+    productId: string,
+    options?: { autoAnalyze?: boolean; autoReply?: boolean }
+  ) =>
+    api<{
+      syncedAt: string;
+      totalComments: number;
+      newComments: number;
+      analyzed: boolean;
+      autoReplied: number;
+      purchaseLeads: number;
+      comments: Array<{
+        commentId: string;
+        postId: string;
+        author: string;
+        text: string;
+        platform: string;
+        parentCommentId?: string;
+        parentAuthor?: string;
+        isReply?: boolean;
+      }>;
+      insights: ProductSavedAnalysis['insights'];
+      analysis?: ProductSavedAnalysis;
+      savedToFirebase?: number;
+      sentiment?: {
+        positive: number;
+        neutral: number;
+        negative: number;
+        purchase: number;
+        inquiry: number;
+      };
+      platformErrors?: Array<{ platform: string; postId?: string; error: string }>;
+    }>(`/products/${productId}/analysis/sync`, {
+      method: 'POST',
+      token,
+      body: JSON.stringify({
+        autoAnalyze: options?.autoAnalyze !== false,
+        autoReply: options?.autoReply !== false,
+      }),
     }),
 
   productCommentAction: (
@@ -385,6 +431,7 @@ export const apiClient = {
       platform?: string;
       message?: string;
       customerMessage?: string;
+      customerName?: string;
     }
   ) =>
     api<{
@@ -396,21 +443,104 @@ export const apiClient = {
     }>(`/products/${productId}/comment-action`, { method: 'POST', token, body: JSON.stringify(data) }),
 
   getSocialAccounts: (token: string) =>
-    api<{ accounts: { id: string; platform: string; username: string; displayName?: string; status: string }[] }>(
-      '/social/accounts',
-      { token }
-    ),
+    api<{ accounts: SocialAccount[] }>('/social/accounts', { token }),
 
   getSocialStatus: (token: string) =>
     api<{
-      platforms: Record<string, { configured: boolean; canConnect?: boolean; redirectUri: string }>;
+      platforms: Record<
+        string,
+        { configured: boolean; canConnect?: boolean; redirectUri: string; envKeys?: string[] }
+      >;
     }>('/social/status', { token }),
 
   getSocialConnectUrl: (token: string, platform: string) =>
-    api<{ authUrl: string; platform: string; mode: string; redirectUri?: string }>(
+    api<{ authUrl?: string; platform: string; mode: string; redirectUri?: string; instructions?: string }>(
       '/social/connect/' + platform,
       { token }
     ),
+
+  connectWhatsApp: (
+    token: string,
+    data: { accessToken: string; phoneNumberId: string; businessAccountId?: string }
+  ) =>
+    api<{ account: SocialAccount; message: string }>('/social/connect/whatsapp', {
+      method: 'POST',
+      token,
+      body: JSON.stringify(data),
+    }),
+
+  getWhatsAppSetup: (token: string) =>
+    api<{
+      webhookUrl: string;
+      verifyToken: string;
+      metaAppId: string | null;
+      envCredentialsReady: boolean;
+      envHasNotifyPhone: boolean;
+      whatsappNotifyPhone: string;
+      whatsappAlertsEnabled: boolean;
+      whatsappAutoReplyEnabled: boolean;
+      whatsappDefaultProductId: string;
+      whatsappPublishRecipients: string;
+    }>('/social/whatsapp/setup', { token }),
+
+  connectWhatsAppFromEnv: (token: string) =>
+    api<{ account: SocialAccount; message: string }>('/social/whatsapp/connect-env', {
+      method: 'POST',
+      token,
+    }),
+
+  updateWhatsAppSettings: (
+    token: string,
+    data: {
+      notifyPhone?: string;
+      alertsEnabled?: boolean;
+      autoReplyEnabled?: boolean;
+      defaultProductId?: string;
+      publishRecipients?: string;
+    }
+  ) =>
+    api<{
+      whatsappNotifyPhone: string;
+      whatsappAlertsEnabled: boolean;
+      whatsappAutoReplyEnabled: boolean;
+      whatsappDefaultProductId: string;
+      whatsappPublishRecipients: string;
+    }>('/social/whatsapp/settings', {
+      method: 'PUT',
+      token,
+      body: JSON.stringify(data),
+    }),
+
+  testWhatsAppAlert: (token: string) =>
+    api<{ success: boolean; message: string }>('/social/whatsapp/test', { method: 'POST', token }),
+
+  getMetaPendingPages: (token: string, pendingId: string) =>
+    api<{
+      pendingId: string;
+      platform: string;
+      pages: { id: string; name: string; hasInstagram: boolean; igUsername?: string }[];
+    }>(`/social/meta/pending/${pendingId}`, { token }),
+
+  completeMetaPageSelection: (token: string, data: { pendingId: string; pageId: string }) =>
+    api<{ account: SocialAccount; message: string }>('/social/meta/complete', {
+      method: 'POST',
+      token,
+      body: JSON.stringify(data),
+    }),
+
+  getGoogleBusinessPendingAccounts: (token: string, pendingId: string) =>
+    api<{
+      pendingId: string;
+      platform: string;
+      accounts: { name: string; accountName: string; type?: string }[];
+    }>(`/social/google-business/pending/${pendingId}`, { token }),
+
+  completeGoogleBusinessSelection: (token: string, data: { pendingId: string; accountName: string }) =>
+    api<{ account: SocialAccount; message: string }>('/social/google-business/complete', {
+      method: 'POST',
+      token,
+      body: JSON.stringify(data),
+    }),
 
   disconnectSocial: (token: string, id: string) =>
     api('/social/accounts/' + id, { method: 'DELETE', token }),
@@ -433,6 +563,12 @@ export const apiClient = {
 
   createCheckout: (data: { productId: string; quantity?: number }) =>
     api<{ id: string; total: number; items: unknown[] }>('/checkout/session', { method: 'POST', body: JSON.stringify(data) }),
+
+  getCheckoutSession: (sessionId: string) =>
+    api<CheckoutSession>(`/checkout/session/${sessionId}`),
+
+  updateCheckoutSession: (sessionId: string, data: { customer?: { name: string; email?: string; phone?: string } }) =>
+    api<CheckoutSession>(`/checkout/session/${sessionId}`, { method: 'PUT', body: JSON.stringify(data) }),
 
   simulatePayment: (checkoutSessionId: string, tenantId?: string) =>
     api('/payments/simulate-success', { method: 'POST', body: JSON.stringify({ checkoutSessionId, tenantId }) }),

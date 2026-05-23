@@ -38,8 +38,8 @@ export default function PublicProductPage() {
       </nav>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-2xl px-6 py-12">
         <div className="glass-card overflow-hidden">
-          <div className="flex h-64 items-center justify-center bg-gradient-to-br from-violet-500/30 to-cyan-500/30">
-            <ShoppingBag className="h-20 w-20 text-violet-400/60" />
+          <div className="flex h-64 items-center justify-center bg-gradient-to-br from-brand-instagram/20 to-brand-facebook/20">
+            <ShoppingBag className="h-20 w-20 text-brand-instagram/60" />
           </div>
           <div className="p-8">
             <h1 className="text-3xl font-bold capitalize">{slug?.replace(/-/g, ' ')}</h1>

@@ -1,49 +1,47 @@
-# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# Dependencies
+node_modules/
 
-# compiled output
-dist
-tmp
-out-tsc
+# Build output
+dist/
+out-tsc/
 *.tsbuildinfo
-.expo
-.expo-shared
+apps/web/.next/
+services/api/dist/
 
-# dependencies
-node_modules
+# Environment & secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+apps/web/.env.local
+services/api/.env
+firebase-service-account.json
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
+# Logs & debug
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing
+coverage/
+
+# IDEs
+.idea/
 *.sublime-workspace
-
-# IDE - VSCode
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
+# OS
 .DS_Store
 Thumbs.db
 
+# Expo (if used later)
+.expo/
+.expo-shared/
+
+# Cursor
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
-
-# Replit
-.cache/
-.local/

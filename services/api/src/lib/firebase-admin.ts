@@ -88,6 +88,9 @@ export function initFirebaseAdmin(): typeof admin | null {
         });
       }
     }
+    if (admin.apps.length) {
+      admin.firestore().settings({ ignoreUndefinedProperties: true });
+    }
     initialized = true;
     return admin;
   } catch (err) {

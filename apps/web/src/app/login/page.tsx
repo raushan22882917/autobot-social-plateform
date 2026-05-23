@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Bot, ArrowRight, Eye, EyeOff, Sparkles, Shield, TrendingUp, Users } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { isFirebaseConfigured } from '@/lib/firebase';
-import { GoogleOAuthSetupHelp } from '@/components/google-oauth-setup-help';
+import { FirebaseSetupBanner } from '@/components/firebase-setup-banner';
 
 const highlights = [
   { icon: TrendingUp, text: 'Boost sales by 3x with AI automation' },
@@ -16,7 +16,7 @@ const highlights = [
 ];
 
 export default function LoginPage() {
-  const { login, loginWithGoogle, authMode } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd]   = useState(false);
@@ -51,12 +51,12 @@ export default function LoginPage() {
             alt="Social commerce"
             className="h-full w-full object-cover opacity-30"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-violet-950/95 via-[#060a12]/90 to-[#060a12]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#833AB4]/90 via-[#E4405F]/85 to-[#F77737]/80" />
         </div>
 
         <div className="relative flex flex-1 flex-col p-10">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-purple-700 shadow-lg shadow-violet-900/50">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#833AB4] via-[#E4405F] to-[#F77737] shadow-lg shadow-brand-instagram/30">
               <Bot className="h-5 w-5 text-white" />
             </div>
             <span className="text-xl font-bold gradient-text">AutoBot360</span>
@@ -66,26 +66,26 @@ export default function LoginPage() {
             <h2 className="text-4xl font-black leading-tight text-white">
               The smartest way<br />to sell on social.
             </h2>
-            <p className="mt-4 text-white/50 leading-relaxed">
+            <p className="mt-4 text-muted-foreground leading-relaxed">
               Automate your entire social commerce pipeline with AI-powered tools built for Indian sellers.
             </p>
 
             <div className="mt-10 space-y-4">
               {highlights.map((h) => (
                 <div key={h.text} className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-violet-500/20 border border-violet-500/25">
-                    <h.icon className="h-4 w-4 text-violet-400" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-instagram/15 border border-brand-instagram/25">
+                    <h.icon className="h-4 w-4 text-brand-instagram" />
                   </div>
-                  <span className="text-sm text-white/65">{h.text}</span>
+                  <span className="text-sm text-muted-foreground">{h.text}</span>
                 </div>
               ))}
             </div>
 
             <div className="mt-10 grid grid-cols-3 gap-4">
               {[['12K+','Sellers'],['₹48Cr+','Revenue'],['2.4M+','Posts']].map(([v,l]) => (
-                <div key={l} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
+                <div key={l} className="rounded-2xl border border-white/30 bg-white/15 p-4 text-center backdrop-blur-sm">
                   <div className="text-2xl font-black gradient-text">{v}</div>
-                  <div className="mt-0.5 text-xs text-white/40">{l}</div>
+                  <div className="mt-0.5 text-xs text-muted-foreground">{l}</div>
                 </div>
               ))}
             </div>
@@ -94,33 +94,31 @@ export default function LoginPage() {
       </div>
 
       {/* Right form panel */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 lg:px-16">
+      <div className="flex flex-1 flex-col items-center justify-center bg-white px-6 py-12 lg:px-16">
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-md">
 
           {/* Mobile logo */}
           <div className="mb-8 flex items-center gap-2 lg:hidden">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-purple-700">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#833AB4] via-[#E4405F] to-[#F77737]">
               <Bot className="h-4 w-4 text-white" />
             </div>
             <span className="text-xl font-bold gradient-text">AutoBot360</span>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-white">Welcome back</h1>
-            <p className="mt-2 text-white/50">Sign in to your AutoBot360 dashboard</p>
-            {authMode === 'dev' ? (
-              <span className="badge badge-amber mt-3 inline-flex">Dev auth mode</span>
-            ) : (
-              <span className="badge badge-violet mt-3 inline-flex">Firebase auth</span>
+            <h1 className="text-3xl font-black text-foreground">Welcome back</h1>
+            <p className="mt-2 text-muted-foreground">Sign in to your AutoBot360 dashboard</p>
+            {firebaseEnabled && (
+              <span className="badge badge-instagram mt-3 inline-flex">Firebase auth</span>
             )}
           </div>
 
-          {firebaseEnabled && <GoogleOAuthSetupHelp context="login" />}
+          <FirebaseSetupBanner />
 
           {firebaseEnabled && (
             <button
               type="button" onClick={handleGoogle} disabled={loading}
-              className="mb-5 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/[0.05] py-3 text-sm font-semibold text-white/80 transition hover:bg-white/[0.09] hover:border-white/25 hover:text-white disabled:opacity-50"
+              className="mb-5 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/15 bg-white/[0.05] py-3 text-sm font-semibold text-foreground transition hover:bg-white/[0.09] hover:border-white/25 hover:text-foreground disabled:opacity-50"
             >
               <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -136,7 +134,7 @@ export default function LoginPage() {
             <div className="relative mb-5">
               <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10" /></div>
               <div className="relative flex justify-center">
-                <span className="bg-[#060a12] px-4 text-xs text-white/35 uppercase tracking-wider">or continue with email</span>
+                <span className="bg-white px-4 text-xs text-muted-foreground uppercase tracking-wider">or continue with email</span>
               </div>
             </div>
           )}
@@ -149,7 +147,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-white/70">Email address</label>
+              <label className="mb-1.5 block text-sm font-semibold text-foreground/80">Email address</label>
               <input
                 type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com" required
@@ -158,8 +156,8 @@ export default function LoginPage() {
             </div>
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-sm font-semibold text-white/70">Password</label>
-                <a href="#" className="text-xs text-violet-400 hover:text-violet-300 transition">Forgot password?</a>
+                <label className="text-sm font-semibold text-foreground/80">Password</label>
+                <a href="#" className="text-xs text-brand-instagram hover:text-brand-instagram transition">Forgot password?</a>
               </div>
               <div className="relative">
                 <input
@@ -169,7 +167,7 @@ export default function LoginPage() {
                   className="field-input pr-12"
                 />
                 <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/35 hover:text-white/65 transition">
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition">
                   {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
@@ -193,9 +191,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-white/40">
+          <p className="mt-6 text-center text-sm text-muted-foreground">
             Don't have an account?{' '}
-            <Link href="/signup" className="font-semibold text-violet-400 hover:text-violet-300 transition">Create one free</Link>
+            <Link href="/signup" className="font-semibold text-brand-instagram hover:text-brand-instagram transition">Create one free</Link>
           </p>
         </motion.div>
       </div>

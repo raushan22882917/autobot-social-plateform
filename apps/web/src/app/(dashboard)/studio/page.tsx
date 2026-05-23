@@ -1,7 +1,5 @@
 'use client';
 
-;
-
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -11,7 +9,8 @@ import {
   Sparkles,
   ImagePlus,
   Clapperboard,
-  Film,
+  Circle,
+  Video,
   Music,
   Calendar,
   Save,
@@ -38,22 +37,24 @@ const STUDIO_PLATFORMS: { id: PreviewPlatform; label: string; publish: boolean }
   { id: 'instagram', label: 'Instagram', publish: true },
   { id: 'facebook', label: 'Facebook', publish: true },
   { id: 'youtube', label: 'YouTube', publish: true },
-  { id: 'tiktok', label: 'TikTok', publish: true },
-  { id: 'whatsapp', label: 'WhatsApp', publish: false },
-  { id: 'linkedin', label: 'LinkedIn', publish: false },
+  { id: 'whatsapp', label: 'WhatsApp', publish: true },
   { id: 'pinterest', label: 'Pinterest', publish: false },
-  { id: 'telegram', label: 'Telegram', publish: false },
   { id: 'google', label: 'Google', publish: false },
 ];
 
 const CONTENT_TABS = [
   { id: 'post', label: 'Post' },
-  { id: 'reel', label: 'Reel / Short' },
+  { id: 'reel', label: 'Reels' },
   { id: 'story', label: 'Story' },
-  { id: 'video', label: 'Full Video' },
 ] as const;
 
-type ContentTab = (typeof CONTENT_TABS)[number]['id'];
+type ContentFormat = (typeof CONTENT_TABS)[number]['id'];
+
+const ASPECT_BY_FORMAT: Record<ContentFormat, '1:1' | '9:16'> = {
+  post: '1:1',
+  reel: '9:16',
+  story: '9:16',
+};
 
 const TONES = ['Engaging', 'Luxury', 'Playful', 'Minimal', 'Urgent sale'];
 
@@ -63,6 +64,16 @@ function isHostedMediaUrl(url: string) {
 
 function mediaForApi(items: StudioMediaItem[]) {
   return items.filter((m) => isHostedMediaUrl(m.url) && m.type !== 'model');
+}
+
+function isUploadableFile(file: File) {
+  if (file.type.startsWith('image/') || file.type.startsWith('video/')) return true;
+  return /\.(jpe?g|png|gif|webp|mp4|mov|webm|m4v)$/i.test(file.name);
+}
+
+function inferUploadType(file: File): 'image' | 'video' {
+  if (file.type.startsWith('video/') || /\.(mp4|mov|webm|m4v)$/i.test(file.name)) return 'video';
+  return 'image';
 }
 
 interface StudioGenerated {
@@ -95,12 +106,14 @@ export default function StudioPage() {
     },
   });
   const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
+  const [selectedPreviewIdx, setSelectedPreviewIdx] = useState(0);
+  const [dragOver, setDragOver] = useState(false);
   const [connections, setConnections] = useState<ConnectionStatus | null>(null);
   const [productId, setProductId] = useState('');
   const [platforms, setPlatforms] = useState<string[]>(['instagram']);
   const [previewPlatform, setPreviewPlatform] = useState<PreviewPlatform>('instagram');
-  const [contentTab, setContentTab] = useState<ContentTab>('post');
-  const [aspectRatio, setAspectRatio] = useState<'1:1' | '9:16' | '16:9'>('1:1');
+  const [contentFormat, setContentFormat] = useState<ContentFormat>('post');
+  const [aspectRatio, setAspectRatio] = useState<'1:1' | '9:16'>('1:1');
   const [musicOn, setMusicOn] = useState(true);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [media, setMedia] = useState<StudioMediaItem[]>([]);
@@ -123,7 +136,11 @@ export default function StudioPage() {
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([]);
 
   const selectedProduct = products.find((p) => p.id === productId);
-  const previewMedia = media.find((m) => m.type === 'image' || m.type === 'video') || media[0];
+  const previewMedia =
+    media[selectedPreviewIdx] ||
+    media.find((m) => m.type === 'video') ||
+    media.find((m) => m.type === 'image') ||
+    media[0];
   const selectedImage =
     media.filter((m) => m.type === 'image')[selectedMediaIndex]?.url ||
     media.find((m) => m.type === 'image')?.url;
@@ -146,11 +163,11 @@ export default function StudioPage() {
           gemini: c.gemini,
           hitem3d: c.hitem3d,
           model: c.model || '',
-          features: c.features || {
-            imageGenerate: c.gemini,
-            imageEnhance: c.gemini,
-            videoGenerate: c.gemini,
-            imageTo3d: c.hitem3d,
+          features: {
+            imageGenerate: c.features?.imageGenerate ?? c.gemini,
+            imageEnhance: c.features?.imageEnhance ?? c.gemini,
+            videoGenerate: c.features?.videoGenerate ?? c.gemini,
+            imageTo3d: c.features?.imageTo3d ?? c.hitem3d,
           },
         })
       )
@@ -188,10 +205,14 @@ export default function StudioPage() {
   }, [caption, headline, hashtags, cta, media, platforms]);
 
   useEffect(() => {
-    if (contentTab === 'post') setAspectRatio('1:1');
-    if (contentTab === 'reel' || contentTab === 'story') setAspectRatio('9:16');
-    if (contentTab === 'video') setAspectRatio('16:9');
-  }, [contentTab]);
+    setAspectRatio(ASPECT_BY_FORMAT[contentFormat]);
+  }, [contentFormat]);
+
+  useEffect(() => {
+    if (selectedPreviewIdx >= media.length) {
+      setSelectedPreviewIdx(Math.max(0, media.length - 1));
+    }
+  }, [media.length, selectedPreviewIdx]);
 
   function togglePublishPlatform(p: string) {
     setPlatforms((prev) =>
@@ -204,18 +225,32 @@ export default function StudioPage() {
     if (publish) togglePublishPlatform(id);
   }
 
-  async function onFileUpload(e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') {
-    const files = e.target.files;
-    if (!files?.length || !token) return;
+  async function uploadFiles(fileList: FileList | File[]) {
+    if (!token) return;
+    const files = Array.from(fileList).filter(isUploadableFile);
+    if (!files.length) {
+      setMessage({ type: 'err', text: 'Choose an image (jpg, png, webp) or video (mp4, mov, webm).' });
+      return;
+    }
     setUploadingMedia(true);
     setMessage(null);
     try {
-      for (const file of Array.from(files)) {
+      const added: StudioMediaItem[] = [];
+      for (const file of files) {
         const { media: uploaded } = await apiClient.uploadStudioMedia(token, file);
-        setMedia((m) => [
-          ...m,
-          { type: uploaded.type || type, url: uploaded.url, name: uploaded.name || file.name },
-        ]);
+        const itemType = (uploaded.type || inferUploadType(file)) as StudioMediaItem['type'];
+        added.push({
+          type: itemType,
+          url: uploaded.url,
+          name: uploaded.name || file.name,
+        });
+      }
+      const startLen = media.length;
+      setMedia((m) => [...m, ...added]);
+      const videoOffset = added.findIndex((item) => item.type === 'video');
+      if (videoOffset >= 0) {
+        setSelectedPreviewIdx(startLen + videoOffset);
+        if (contentFormat === 'post') setContentFormat('reel');
       }
       setMessage({ type: 'ok', text: 'Media uploaded — ready for publishing.' });
     } catch (err) {
@@ -225,8 +260,21 @@ export default function StudioPage() {
       });
     } finally {
       setUploadingMedia(false);
-      e.target.value = '';
     }
+  }
+
+  async function onFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files?.length) return;
+    await uploadFiles(files);
+    e.target.value = '';
+  }
+
+  function onMediaDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    if (uploadingMedia || !e.dataTransfer.files.length) return;
+    void uploadFiles(e.dataTransfer.files);
   }
 
   async function handleGenerate() {
@@ -267,6 +315,7 @@ export default function StudioPage() {
         cta,
         media: mediaForApi(media),
         tone,
+        contentFormat,
       });
       setMessage({ type: 'ok', text: 'Draft saved' });
     } catch (err) {
@@ -303,6 +352,7 @@ export default function StudioPage() {
         cta,
         media: mediaForApi(media),
         tone,
+        contentFormat,
       });
       const scheduleRes = await apiClient.studioScheduleDraft(token, draftRes.draft.id, {
         publishNow,
@@ -355,22 +405,22 @@ export default function StudioPage() {
             <h2 className="text-[32px] font-semibold leading-10 tracking-tight text-[#e7e0ed]">
               Content Studio
             </h2>
-            <p className="mt-1 text-[#cbc3d7] opacity-70">
+            <p className="mt-1 text-muted-foreground opacity-70">
               Craft high-performance automated social content for multi-platform distribution.
             </p>
-            <p className="mt-2 text-xs text-[#958ea0]">
+            <p className="mt-2 text-xs text-muted-foreground">
               Gemini{' '}
               {connections?.gemini?.ok ? (
-                <span className="text-[#4fdbc8]">connected</span>
+                <span className="text-[brand-whatsapp]">connected</span>
               ) : (
-                <span className="text-amber-400/80">offline</span>
+                <span className="text-brand-google-yellow/80">offline</span>
               )}
               {' · '}
               Hitem3D{' '}
               {connections?.hitem3d?.ok ? (
-                <span className="text-[#4fdbc8]">connected</span>
+                <span className="text-[brand-whatsapp]">connected</span>
               ) : (
-                <span className="text-amber-400/80">offline</span>
+                <span className="text-brand-google-yellow/80">offline</span>
               )}
             </p>
           </div>
@@ -418,9 +468,9 @@ export default function StudioPage() {
             <button
               key={tab.id}
               type="button"
-              onClick={() => setContentTab(tab.id)}
+              onClick={() => setContentFormat(tab.id)}
               className={`${styles.labelCaps} rounded-lg px-6 py-2 transition ${
-                contentTab === tab.id ? styles.tabActive : 'text-[#cbc3d7] hover:text-[#e7e0ed]'
+                contentFormat === tab.id ? styles.tabActive : 'text-muted-foreground hover:text-[#e7e0ed]'
               }`}
             >
               {tab.label}
@@ -431,9 +481,9 @@ export default function StudioPage() {
         <div className="space-y-4">
           {/* Product */}
           <div>
-            <label className={`${styles.labelCaps} mb-2 block text-[#cbc3d7]`}>Linked Product</label>
+            <label className={`${styles.labelCaps} mb-2 block text-muted-foreground`}>Linked Product</label>
             <div className="relative">
-              <Package className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#d0bcff] opacity-70" />
+              <Package className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-instagram opacity-70" />
               <select
                 className={`${styles.selectField} py-3 pl-12 pr-10`}
                 value={productId}
@@ -446,13 +496,13 @@ export default function StudioPage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#958ea0]" />
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
             </div>
           </div>
 
           {/* Publish targets */}
           <div>
-            <label className={`${styles.labelCaps} mb-2 block text-[#cbc3d7]`}>Publish to</label>
+            <label className={`${styles.labelCaps} mb-2 block text-muted-foreground`}>Publish to</label>
             <div className="flex flex-wrap gap-2">
               {STUDIO_PLATFORMS.map((p) => {
                 const isPreview = previewPlatform === p.id;
@@ -465,95 +515,125 @@ export default function StudioPage() {
                     className={`${styles.labelCaps} rounded-lg px-4 py-2 transition ${
                       isPreview || isPublishing
                         ? styles.tabActive
-                        : 'border border-white/10 text-[#cbc3d7] hover:text-[#e7e0ed]'
+                        : 'border border-white/10 text-muted-foreground hover:text-[#e7e0ed]'
                     } ${!p.publish ? 'opacity-80' : ''}`}
                     title={p.publish ? 'Publish & preview' : 'Preview only'}
                   >
                     {p.label}
                     {p.publish && isPublishing && (
-                      <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[#4cd7f6]" />
+                      <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-[brand-facebook]" />
                     )}
                   </button>
                 );
               })}
             </div>
-            <p className="mt-2 text-[10px] text-[#958ea0]">
-              Instagram, Facebook, YouTube & TikTok publish live · others update the phone preview
+            <p className="mt-2 text-[10px] text-muted-foreground">
+              Instagram, Facebook, YouTube & WhatsApp publish live · others update the phone preview
             </p>
           </div>
 
           {/* Media */}
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <label className={`${styles.labelCaps} text-[#cbc3d7]`}>Media Assets</label>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#958ea0]/50">
+              <label className={`${styles.labelCaps} text-muted-foreground`}>Media Assets</label>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50">
                 AI Studio
               </span>
             </div>
             <input
               ref={imageInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,image/gif"
               multiple
               className="hidden"
               disabled={uploadingMedia}
-              onChange={(e) => void onFileUpload(e, 'image')}
+              onChange={(e) => void onFileUpload(e)}
             />
             <input
               ref={videoInputRef}
               type="file"
-              accept="video/*"
+              accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm"
+              multiple
               className="hidden"
               disabled={uploadingMedia}
-              onChange={(e) => void onFileUpload(e, 'video')}
+              onChange={(e) => void onFileUpload(e)}
             />
-            <div className="grid h-48 grid-cols-4 gap-4">
-              <button
-                type="button"
-                disabled={uploadingMedia}
-                onClick={() => imageInputRef.current?.click()}
-                className="col-span-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-white/10 bg-white/5 px-4 transition hover:bg-white/10"
+            <div className="grid min-h-[12rem] grid-cols-4 gap-4">
+              <div
+                className={`col-span-2 flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-4 transition ${
+                  dragOver
+                    ? 'border-[brand-facebook] bg-[brand-facebook]/10'
+                    : 'border-white/10 bg-white/5 hover:bg-white/10'
+                }`}
+                onDragEnter={(e) => {
+                  e.preventDefault();
+                  setDragOver(true);
+                }}
+                onDragOver={(e) => e.preventDefault()}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={onMediaDrop}
               >
-                <Upload className="h-8 w-8 text-[#d0bcff]" />
+                <Upload className="h-8 w-8 text-brand-instagram" />
                 <div className="text-center">
-                  <p className="text-xs font-medium">Upload Media</p>
-                  <p className="text-[10px] text-[#cbc3d7] opacity-60">
-                    {uploadingMedia ? 'Uploading…' : 'Drag & drop assets'}
+                  <p className="text-xs font-medium">Upload your media</p>
+                  <p className="text-[10px] text-muted-foreground opacity-60">
+                    {uploadingMedia ? 'Uploading…' : 'Drag & drop images or videos'}
                   </p>
+                  <p className="mt-1 text-[10px] text-muted-foreground">Images up to 10MB · Videos up to 100MB</p>
                 </div>
-              </button>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <button
+                    type="button"
+                    disabled={uploadingMedia}
+                    onClick={() => imageInputRef.current?.click()}
+                    className={`${styles.labelCaps} flex items-center gap-2 rounded-lg border border-white/15 bg-[#2c2832] px-3 py-2 text-[10px] text-[#e7e0ed] transition hover:bg-[#37333d] disabled:opacity-50`}
+                  >
+                    <ImagePlus className="h-4 w-4 text-brand-instagram" />
+                    Upload image
+                  </button>
+                  <button
+                    type="button"
+                    disabled={uploadingMedia}
+                    onClick={() => videoInputRef.current?.click()}
+                    className={`${styles.labelCaps} flex items-center gap-2 rounded-lg border border-white/15 bg-[#2c2832] px-3 py-2 text-[10px] text-[#e7e0ed] transition hover:bg-[#37333d] disabled:opacity-50`}
+                  >
+                    <Video className="h-4 w-4 text-[brand-facebook]" />
+                    Upload video
+                  </button>
+                </div>
+              </div>
               <div className="col-span-2 grid grid-rows-3 gap-2">
                 <button
                   type="button"
-                  onClick={() => setContentTab('post')}
+                  onClick={() => setContentFormat('post')}
                   className="group flex items-center gap-3 rounded-xl border border-white/5 bg-[#2c2832] px-4 text-left transition hover:bg-[#37333d]"
                 >
-                  <ImagePlus className="h-5 w-5 text-[#d0bcff] transition group-hover:scale-110" />
+                  <ImagePlus className="h-5 w-5 text-brand-instagram transition group-hover:scale-110" />
                   <div>
-                    <p className="text-xs font-semibold">AI image</p>
-                    <p className="text-[10px] text-[#cbc3d7]/70">Gemini generate / enhance</p>
+                    <p className="text-xs font-semibold">Post</p>
+                    <p className="text-[10px] text-muted-foreground/70">Square feed · 1:1</p>
                   </div>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setContentTab('reel')}
+                  onClick={() => setContentFormat('reel')}
                   className="group flex items-center gap-3 rounded-xl border border-white/5 bg-[#2c2832] px-4 text-left transition hover:bg-[#37333d]"
                 >
-                  <Clapperboard className="h-5 w-5 text-[#4cd7f6] transition group-hover:scale-110" />
+                  <Clapperboard className="h-5 w-5 text-[brand-facebook] transition group-hover:scale-110" />
                   <div>
-                    <p className="text-xs font-semibold">AI reel (Veo)</p>
-                    <p className="text-[10px] text-[#cbc3d7]/70">Short video from prompt</p>
+                    <p className="text-xs font-semibold">Reels</p>
+                    <p className="text-[10px] text-muted-foreground/70">Short video · 9:16</p>
                   </div>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setContentTab('video')}
+                  onClick={() => setContentFormat('story')}
                   className="group flex items-center gap-3 rounded-xl border border-white/5 bg-[#2c2832] px-4 text-left transition hover:bg-[#37333d]"
                 >
-                  <Film className="h-5 w-5 text-[#4fdbc8] transition group-hover:scale-110" />
+                  <Circle className="h-5 w-5 text-[brand-whatsapp] transition group-hover:scale-110" />
                   <div>
-                    <p className="text-xs font-semibold">3D product</p>
-                    <p className="text-[10px] text-[#cbc3d7]/70">Hitem3D image → GLB</p>
+                    <p className="text-xs font-semibold">Story</p>
+                    <p className="text-[10px] text-muted-foreground/70">24h vertical · 9:16</p>
                   </div>
                 </button>
               </div>
@@ -562,22 +642,31 @@ export default function StudioPage() {
               <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
                 {media.map((m, i) => {
                   const imageIdx = media.slice(0, i).filter((x) => x.type === 'image').length;
-                  const isSelected = m.type === 'image' && imageIdx === selectedMediaIndex;
+                  const isPreviewSelected = i === selectedPreviewIdx;
                   return (
                     <button
-                      key={i}
+                      key={`${m.url}-${i}`}
                       type="button"
-                      onClick={() => m.type === 'image' && setSelectedMediaIndex(imageIdx)}
+                      onClick={() => {
+                        setSelectedPreviewIdx(i);
+                        if (m.type === 'image') setSelectedMediaIndex(imageIdx);
+                      }}
                       className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 ${
-                        isSelected ? 'border-[#d0bcff]' : 'border-transparent'
+                        isPreviewSelected ? 'border-brand-instagram' : 'border-transparent'
                       }`}
+                      title={m.name}
                     >
                       {m.type === 'image' ? (
                         <img src={m.url} alt="" className="h-full w-full object-cover" />
                       ) : m.type === 'video' ? (
-                        <video src={m.url} className="h-full w-full object-cover" muted />
+                        <>
+                          <video src={m.url} className="h-full w-full object-cover" muted />
+                          <span className="absolute bottom-0.5 left-0.5 rounded bg-black/75 px-1 text-[9px] font-bold text-[brand-facebook]">
+                            VIDEO
+                          </span>
+                        </>
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-[#2c2832] text-[10px] text-[#4fdbc8]">
+                        <div className="flex h-full w-full items-center justify-center bg-[#2c2832] text-[10px] text-[brand-whatsapp]">
                           3D
                         </div>
                       )}
@@ -588,6 +677,11 @@ export default function StudioPage() {
                         onClick={(e) => {
                           e.stopPropagation();
                           setMedia((list) => list.filter((_, j) => j !== i));
+                          setSelectedPreviewIdx((idx) => {
+                            if (idx === i) return Math.max(0, i - 1);
+                            if (idx > i) return idx - 1;
+                            return idx;
+                          });
                         }}
                       >
                         ×
@@ -600,11 +694,15 @@ export default function StudioPage() {
 
             <StudioAiTools
               token={token}
+              contentFormat={contentFormat}
               aspectRatio={aspectRatio}
               features={config.features}
               selectedImageUrl={selectedImage}
               disabled={uploadingMedia}
-              onMediaAdded={(item) => setMedia((m) => [...m, item])}
+              onMediaAdded={(item) => {
+                setMedia((m) => [...m, item]);
+                if (item.type === 'video' && contentFormat === 'post') setContentFormat('reel');
+              }}
               onMessage={setMessage}
             />
           </div>
@@ -612,7 +710,7 @@ export default function StudioPage() {
           {/* Caption */}
           <div>
             <motion.div className="mb-2 flex items-end justify-between">
-              <label className={`${styles.labelCaps} text-[#cbc3d7]`}>Caption &amp; Hashtags</label>
+              <label className={`${styles.labelCaps} text-muted-foreground`}>Caption &amp; Hashtags</label>
               <button
                 type="button"
                 disabled={generating || (!config.gemini && !connections?.gemini?.ok)}
@@ -638,50 +736,44 @@ export default function StudioPage() {
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
               />
-              <div className="absolute bottom-3 right-4 text-sm text-[#958ea0] opacity-40">
+              <div className="absolute bottom-3 right-4 text-sm text-muted-foreground opacity-40">
                 {captionLen} / 5000
               </div>
             </div>
             {hashtags && (
-              <p className="mt-2 text-xs text-[#4cd7f6]">{hashtags}</p>
+              <p className="mt-2 text-xs text-[brand-facebook]">{hashtags}</p>
             )}
           </div>
 
           {/* Format row */}
           <div className="grid grid-cols-3 gap-4 pt-2">
             <div>
-              <label className={`${styles.labelCaps} mb-2 block text-[#cbc3d7]`}>Aspect Ratio</label>
-              <motion.div className="flex gap-2">
-                {(['1:1', '9:16', '16:9'] as const).map((r) => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setAspectRatio(r)}
-                    className={`${styles.labelCaps} flex-1 rounded-lg border py-2 text-[10px] transition ${
-                      aspectRatio === r ? styles.ratioActive : 'border-white/10 text-[#cbc3d7]'
-                    }`}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </motion.div>
+              <label className={`${styles.labelCaps} mb-2 block text-muted-foreground`}>Aspect ratio</label>
+              <div
+                className={`${styles.labelCaps} flex items-center justify-center rounded-lg border py-2 text-[10px] ${styles.ratioActive}`}
+              >
+                {aspectRatio}
+                <span className="ml-1 font-normal normal-case text-muted-foreground/80">
+                  ({contentFormat === 'post' ? 'Post' : contentFormat === 'reel' ? 'Reels' : 'Story'})
+                </span>
+              </div>
             </div>
             <div>
-              <label className={`${styles.labelCaps} mb-2 block text-[#cbc3d7]`}>Background Music</label>
+              <label className={`${styles.labelCaps} mb-2 block text-muted-foreground`}>Background Music</label>
               <div className="flex h-10 items-center justify-between rounded-xl border border-white/10 bg-[#1d1a23] px-4">
-                <Music className="h-4 w-4 text-[#d0bcff]" />
+                <Music className="h-4 w-4 text-brand-instagram" />
                 <input
                   type="checkbox"
                   checked={musicOn}
                   onChange={(e) => setMusicOn(e.target.checked)}
-                  className="h-5 w-5 cursor-pointer accent-[#d0bcff]"
+                  className="h-5 w-5 cursor-pointer accent-brand-instagram"
                 />
               </div>
             </div>
             <div>
-              <label className={`${styles.labelCaps} mb-2 block text-[#cbc3d7]`}>Schedule Time</label>
+              <label className={`${styles.labelCaps} mb-2 block text-muted-foreground`}>Schedule Time</label>
               <div className="relative">
-                <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#958ea0]" />
+                <Calendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="datetime-local"
                   className={`${styles.inputField} py-2 pl-9 text-sm`}
@@ -699,9 +791,9 @@ export default function StudioPage() {
                 type="checkbox"
                 checked={verified}
                 onChange={(e) => setVerified(e.target.checked)}
-                className="mt-1 h-4 w-4 accent-[#d0bcff]"
+                className="mt-1 h-4 w-4 accent-brand-instagram"
               />
-              <span className="text-sm text-[#cbc3d7]">
+              <span className="text-sm text-muted-foreground">
                 I reviewed the live preview and confirm this post is ready to publish.
               </span>
             </label>
@@ -709,9 +801,9 @@ export default function StudioPage() {
               <YouTubePrivacySelector value={youtubePrivacy} onChange={setYoutubePrivacy} disabled={saving} />
             )}
             {missingConnections.length > 0 && (
-              <p className="text-xs text-amber-400">
+              <p className="text-xs text-brand-google-yellow">
                 Not connected: {missingConnections.join(', ')}.{' '}
-                <Link href="/social" className="text-[#d0bcff] underline">
+                <Link href="/social" className="text-brand-instagram underline">
                   Connect
                 </Link>
               </p>
@@ -730,7 +822,7 @@ export default function StudioPage() {
                 type="button"
                 disabled={saving || !canPublish}
                 onClick={() => void schedulePost(false)}
-                className={`${styles.labelCaps} flex items-center gap-2 rounded-xl border border-[#d0bcff]/30 bg-[#d0bcff]/10 px-5 py-2 text-[#d0bcff] transition disabled:opacity-40`}
+                className={`${styles.labelCaps} flex items-center gap-2 rounded-xl border border-brand-instagram/30 bg-brand-instagram/10 px-5 py-2 text-brand-instagram transition disabled:opacity-40`}
               >
                 <Calendar className="h-4 w-4" />
                 Schedule
@@ -740,7 +832,7 @@ export default function StudioPage() {
 
           {showAdvanced && (
             <div className={`${styles.glassPanel} space-y-3 rounded-xl p-4`}>
-              <p className={`${styles.labelCaps} text-[#cbc3d7]`}>Advanced copy</p>
+              <p className={`${styles.labelCaps} text-muted-foreground`}>Advanced copy</p>
               <input
                 className={styles.inputField}
                 placeholder="Headline"
@@ -784,11 +876,12 @@ export default function StudioPage() {
 
         <StudioPhonePreview
           platform={previewPlatform}
+          contentFormat={contentFormat}
           caption={fullCaption}
           headline={headline}
           hashtags={hashtags}
           mediaUrl={previewMedia?.url}
-          mediaType={previewMedia?.type}
+          mediaType={previewMedia?.type === 'video' ? 'video' : previewMedia?.url ? 'image' : undefined}
         />
       </section>
     </div>

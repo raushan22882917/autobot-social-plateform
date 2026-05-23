@@ -18,17 +18,25 @@ import { orderRouter } from './agents/order/routes';
 import { checkoutRouter } from './agents/checkout/routes';
 import { analyticsRouter } from './agents/analytics/routes';
 import { notificationRouter } from './agents/notification/routes';
-import { orchestrationRouter } from './agents/orchestration/routes';
 import { studioRouter } from './agents/studio/routes';
 import { teamRouter } from './agents/team/routes';
 import { platformAdminRouter } from './agents/platform-admin/routes';
+import { aiSalesRouter } from './agents/ai-sales/routes';
+import { commentRouter } from './agents/comment-monitor/routes';
+import { gdprRouter } from './agents/gdpr/routes';
+import { auditRouter } from './agents/audit/routes';
+import { mfaRouter } from './agents/auth/mfa-routes';
+import { apiKeysRouter } from './agents/settings/api-keys-routes';
 import { internalRouter } from './internal/routes';
 import { publicRouter } from './routes/public';
+import { webhooksRouter } from './routes/webhooks';
 import { authMiddleware } from './middleware/auth';
 import { errorHandler } from './middleware/error-handler';
 import { assertFirestoreReady, getStorageMode, isDevStore } from './lib/db';
 import { hasValidServiceAccount } from './lib/firebase-admin';
 import { processDueScheduledPosts } from './agents/publish/publish-executor';
+import { reloadApiEnv } from './lib/env';
+import { isGcpPubSubEnabled } from './lib/pubsub';
 import { SOCIAL_PLATFORMS, isPlatformOAuthReady } from './agents/social-connect/config';
 
 const app = express();
@@ -81,8 +89,10 @@ app.get('/health', (_req, res) => {
 });
 
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/auth/mfa', mfaRouter);
 app.use('/api/v1/checkout', checkoutRouter);
 app.use('/api/v1/public', publicRouter);
+app.use('/api/v1/webhooks', webhooksRouter);
 app.use('/api/v1/social/oauth', socialOAuthRouter);
 
 app.use('/api/v1/dashboard', authMiddleware, dashboardRouter);
@@ -93,10 +103,14 @@ app.use('/api/v1/payments', paymentRouter);
 app.use('/api/v1/orders', authMiddleware, orderRouter);
 app.use('/api/v1/analytics', authMiddleware, analyticsRouter);
 app.use('/api/v1/notifications', authMiddleware, notificationRouter);
-app.use('/api/v1/integrations', authMiddleware, orchestrationRouter);
 app.use('/api/v1/studio', authMiddleware, studioRouter);
 app.use('/api/v1/team', teamRouter);
 app.use('/api/v1/platform', platformAdminRouter);
+app.use('/api/v1/ai-sales', authMiddleware, aiSalesRouter);
+app.use('/api/v1/comments', commentRouter);
+app.use('/api/v1/gdpr', authMiddleware, gdprRouter);
+app.use('/api/v1/audit', authMiddleware, auditRouter);
+app.use('/api/v1/settings/api-keys', apiKeysRouter);
 
 app.use('/internal', internalRouter);
 
@@ -106,13 +120,12 @@ async function start() {
   if (!isDevStore()) {
     try {
       await assertFirestoreReady();
-      console.log('Firestore connected (autobot-founder)');
+      console.log(`Firestore connected (${process.env.FIREBASE_PROJECT_ID || 'autobot-founder'})`);
     } catch (err) {
+      console.error(err instanceof Error ? err.message : 'Firestore connection failed');
       console.error(
-        err instanceof Error ? err.message : 'Firestore connection failed'
-      );
-      console.error(
-        'Add firebase-service-account.json at repo root (see firebase-service-account.example.json) or set USE_DEV_STORE=true for local memory only.'
+        'Regenerate firebase-service-account.json: Firebase Console → Service accounts → Generate new private key. ' +
+          'Then run: npm run firebase:check'
       );
       process.exit(1);
     }
@@ -123,19 +136,21 @@ async function start() {
     console.log(
       `Storage: ${isDevStore() ? 'in-memory (USE_DEV_STORE=true)' : 'Firestore (cloud)'}`
     );
+    reloadApiEnv();
     const socialReady = SOCIAL_PLATFORMS.filter((p) => isPlatformOAuthReady(p));
     console.log(
       `Social OAuth ready: ${socialReady.length ? socialReady.join(', ') : 'none (add keys to services/api/.env)'}`
     );
-    if (process.env.DISABLE_N8N_AUTO_DISPATCH === 'true') {
-      console.log('Publish: direct API (n8n dispatch disabled)');
-      const intervalMs = parseInt(process.env.PUBLISH_POLL_INTERVAL_MS || '30000', 10);
-      setInterval(() => {
-        void processDueScheduledPosts().then((n) => {
-          if (n > 0) console.log(`[publish] processed ${n} due post(s)`);
-        });
-      }, intervalMs);
-    }
+    const intervalMs = parseInt(process.env.PUBLISH_POLL_INTERVAL_MS || '30000', 10);
+    console.log(
+      `Events: ${isGcpPubSubEnabled() ? 'Cloud Pub/Sub' : 'in-process (PUBSUB_ENABLED=false)'}`
+    );
+    console.log(`Publish: direct API (poll every ${intervalMs}ms)`);
+    setInterval(() => {
+      void processDueScheduledPosts().then((n) => {
+        if (n > 0) console.log(`[publish] processed ${n} due post(s)`);
+      });
+    }, intervalMs);
   });
 
   server.on('error', (err: NodeJS.ErrnoException) => {

@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type Request, type Response, type NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import { db, getStorageMode, isDevStore } from '../../lib/db';
@@ -45,21 +45,32 @@ authRouter.post('/firebase', async (req, res, next) => {
 });
 
 authRouter.get('/config', (_req, res) => {
-  const devTokenVerify = isDevStore() && Boolean(process.env.FIREBASE_WEB_API_KEY);
   res.json({
-    mode: isFirebaseAdminEnabled() ? 'firebase' : devTokenVerify ? 'firebase-dev' : isDevStore() ? 'dev' : 'production',
+    mode: 'firebase',
     storage: getStorageMode(),
     firebaseAdmin: isFirebaseAdminEnabled(),
-    firebaseDevVerify: devTokenVerify,
     devStore: isDevStore(),
     projectId: process.env.FIREBASE_PROJECT_ID || process.env.GCP_PROJECT_ID,
     googleOAuth: getGoogleOAuthSetup(),
   });
 });
 
-// ─── Dev-only email/password (when Firebase client not configured) ───
+function devAuthDisabled(_req: Request, res: Response) {
+  return res.status(403).json({
+    error: {
+      message: 'Dev auth is disabled. Sign in with Firebase (email/password or Google) in the web app.',
+      code: 'DEV_AUTH_DISABLED',
+    },
+  });
+}
 
-authRouter.post('/signup', async (req, res, next) => {
+// Legacy dev routes — disabled unless USE_DEV_STORE=true
+authRouter.post('/signup', (req, res, next) => {
+  if (!isDevStore()) return devAuthDisabled(req, res);
+  return signupHandler(req, res, next);
+});
+
+async function signupHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const { email, password, displayName, storeName } = req.body;
     if (!email || !password || password.length < 6) {
@@ -134,9 +145,14 @@ authRouter.post('/signup', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+}
+
+authRouter.post('/login', (req, res, next) => {
+  if (!isDevStore()) return devAuthDisabled(req, res);
+  return loginHandler(req, res, next);
 });
 
-authRouter.post('/login', async (req, res, next) => {
+async function loginHandler(req: Request, res: Response, next: NextFunction) {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -198,7 +214,7 @@ authRouter.post('/login', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+}
 
 authRouter.get('/me', authMiddleware, async (req: AuthRequest, res, next) => {
   try {

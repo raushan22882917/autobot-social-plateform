@@ -4,6 +4,7 @@ import { getSocialCredentials } from '../social-connect/token-store';
 import type { SocialPlatform } from '../social-connect/config';
 import { publishToFacebookPage, publishToInstagram } from './platforms/meta-publish';
 import { publishToYouTube } from './platforms/youtube-publish';
+import { publishToWhatsAppBusiness, parseWhatsAppRecipients } from './platforms/whatsapp-publish';
 import { collectImageUrls, collectVideoUrls, buildYouTubeTitle } from './media-utils';
 
 const processing = new Set<string>();
@@ -113,10 +114,31 @@ async function publishPlatform(
       };
     }
 
-    if (platform === 'tiktok') {
+    if (platform === 'whatsapp') {
+      const tenant = await db.get('tenants', post.tenantId as string);
+      const recipients = parseWhatsAppRecipients(
+        (tenant?.whatsappPublishRecipients as string) ||
+          (creds.metadata.publishRecipients as string)
+      );
+      const phoneNumberId = (creds.metadata.phoneNumberId as string) || creds.accountId;
+      const linkUrl =
+        (product?.publicUrl as string) ||
+        (post.productUrl as string) ||
+        undefined;
+
+      const result = await publishToWhatsAppBusiness({
+        accessToken: creds.accessToken,
+        phoneNumberId,
+        caption,
+        imageUrl: media.imageUrl,
+        linkUrl,
+        recipients,
+        displayPhoneNumber: creds.metadata.displayPhoneNumber as string | undefined,
+      });
       return {
-        ok: false,
-        error: 'TikTok video publish is not enabled in API mode yet. Use Instagram/Facebook or enable n8n.',
+        ok: true,
+        platformPostId: result.platformPostId,
+        platformPostUrl: result.platformPostUrl,
       };
     }
 
@@ -126,7 +148,7 @@ async function publishPlatform(
   }
 }
 
-/** Execute publish for a scheduled post (direct API — no n8n). */
+/** Execute publish for a scheduled post via direct platform APIs. */
 export async function executeScheduledPost(postId: string): Promise<{
   status: string;
   results: Record<string, PlatformPublishResult>;

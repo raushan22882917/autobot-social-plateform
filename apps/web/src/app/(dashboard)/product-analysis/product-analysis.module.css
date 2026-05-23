@@ -3,15 +3,15 @@
   height: calc(100vh - 4rem);
   display: flex;
   overflow: hidden;
-  background: #0f0d15;
-  color: #e7e0ed;
+  background: #ffffff;
+  color: #1a2b42;
 }
 
 .feedColumn {
   width: 33.333%;
   min-width: 280px;
   max-width: 420px;
-  border-right: 1px solid rgba(149, 142, 160, 0.1);
+  border-right: 1px solid rgba(24, 119, 242, 0.12);
   display: flex;
   flex-direction: column;
 }
@@ -19,18 +19,19 @@
 .analysisColumn {
   flex: 1;
   overflow-y: auto;
-  background: rgba(15, 13, 21, 0.3);
+  background: #f8f9fc;
 }
 
 .glassCard {
-  background: rgba(15, 13, 21, 0.7);
+  background: #ffffff;
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(24, 119, 242, 0.12);
+  box-shadow: 0 2px 12px rgba(24, 119, 242, 0.06);
 }
 
 .activeFeedItem {
-  border-left: 4px solid #d0bcff !important;
-  background: rgba(208, 188, 255, 0.05);
+  border-left: 4px solid #e4405f !important;
+  background: rgba(228, 64, 95, 0.06);
 }
 
 .feedItemDimmed {
@@ -38,7 +39,7 @@
 }
 
 .glowAccent {
-  box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+  box-shadow: 0 0 40px rgba(228, 64, 95, 0.12);
 }
 
 .labelCaps {
@@ -52,22 +53,22 @@
   width: 4px;
 }
 .customScrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f8f9fc;
 }
 .customScrollbar::-webkit-scrollbar-thumb {
-  background: rgba(208, 188, 255, 0.2);
+  background: rgba(228, 64, 95, 0.25);
   border-radius: 10px;
 }
 
 .aiReplyPanel {
-  background: rgba(15, 13, 21, 0.5);
+  background: #ffffff;
   border-radius: 0.75rem;
   position: relative;
   overflow: hidden;
 }
 
 .aiReplyPanelPrimary {
-  border: 1px solid rgba(208, 188, 255, 0.2);
+  border: 1px solid rgba(228, 64, 95, 0.25);
 }
 .aiReplyPanelPrimary::before {
   content: '';
@@ -76,12 +77,12 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: #d0bcff;
-  opacity: 0.5;
+  background: #e4405f;
+  opacity: 0.6;
 }
 
 .aiReplyPanelSecondary {
-  border: 1px solid rgba(76, 215, 246, 0.2);
+  border: 1px solid rgba(24, 119, 242, 0.25);
 }
 .aiReplyPanelSecondary::before {
   content: '';
@@ -90,12 +91,12 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: #4cd7f6;
-  opacity: 0.5;
+  background: #1877f2;
+  opacity: 0.6;
 }
 
 .aiReplyPanelTertiary {
-  border: 1px solid rgba(79, 219, 200, 0.2);
+  border: 1px solid rgba(37, 211, 102, 0.25);
 }
 .aiReplyPanelTertiary::before {
   content: '';
@@ -104,8 +105,8 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: #4fdbc8;
-  opacity: 0.5;
+  background: #25d366;
+  opacity: 0.6;
 }
 
 .metricValue {
@@ -116,8 +117,8 @@
 }
 
 .btnPrimary {
-  background: #d0bcff;
-  color: #340080;
+  background: linear-gradient(135deg, #833ab4, #e4405f, #f77737);
+  color: #ffffff;
   font-weight: 700;
   font-size: 12px;
   letter-spacing: 0.05em;
@@ -126,17 +127,18 @@
 
 .btnPrimary:hover {
   opacity: 0.9;
-  box-shadow: 0 0 20px rgba(208, 188, 255, 0.3);
+  box-shadow: 0 0 20px rgba(228, 64, 95, 0.25);
 }
 
 .btnGhost {
-  background: #211e27;
-  border: 1px solid rgba(149, 142, 160, 0.3);
+  background: #ffffff;
+  border: 1px solid rgba(24, 119, 242, 0.2);
   font-size: 12px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  color: #1877f2;
 }
 
 .btnGhost:hover {
-  background: #2c2832;
+  background: #eef3fb;
 }

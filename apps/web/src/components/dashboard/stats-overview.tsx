@@ -51,8 +51,8 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
         >
           <div className="flex items-start justify-between">
             <div className="flex-1">
-              <p className="text-sm font-medium text-white/70">{stat.label}</p>
-              <p className="mt-2 text-2xl font-bold text-white">{stat.value}</p>
+              <p className="text-sm font-medium text-foreground/80">{stat.label}</p>
+              <p className="mt-2 text-2xl font-bold text-foreground">{stat.value}</p>
             </div>
             <div
               className={cn(
@@ -63,7 +63,7 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
               )}
             >
               {stat.trend === 'up' && (
-                <ArrowUpRight className="h-4 w-4 text-emerald-400" />
+                <ArrowUpRight className="h-4 w-4 text-brand-whatsapp" />
               )}
               {stat.trend === 'down' && (
                 <ArrowDownRight className="h-4 w-4 text-red-400" />
@@ -77,7 +77,7 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
             <span
               className={cn(
                 'text-xs font-semibold',
-                stat.trend === 'up' && 'text-emerald-400',
+                stat.trend === 'up' && 'text-brand-whatsapp',
                 stat.trend === 'down' && 'text-red-400',
                 stat.trend === 'neutral' && 'text-gray-400'
               )}
@@ -85,7 +85,7 @@ export function StatsOverview({ stats }: StatsOverviewProps) {
               {stat.trend === 'up' && '+'}
               {stat.change}%
             </span>
-            <span className="text-xs text-white/50">vs last month</span>
+            <span className="text-xs text-muted-foreground">vs last month</span>
           </div>
         </motion.div>
       ))}

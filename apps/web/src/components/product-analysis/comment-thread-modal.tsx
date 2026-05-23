@@ -25,6 +25,9 @@ interface CommentThreadModalProps {
   campaignCaption?: string;
   comments: ThreadComment[];
   rootCommentId: string | null;
+  onBuy?: (comment: ThreadComment) => void;
+  onConnect?: (comment: ThreadComment) => void;
+  actionLoadingId?: string | null;
 }
 
 function initials(name: string) {
@@ -41,9 +44,9 @@ function sentimentTag(sentiment?: string, intent?: string) {
     return { label: 'Needs attention', className: 'border-amber-500/20 bg-amber-500/10 text-amber-200' };
   }
   if (intent === 'purchase' || intent === 'question') {
-    return { label: 'Inquiry', className: 'border-[#4cd7f6]/20 bg-[#4cd7f6]/10 text-[#4cd7f6]' };
+    return { label: 'Inquiry', className: 'border-[brand-facebook]/20 bg-[brand-facebook]/10 text-[brand-facebook]' };
   }
-  return { label: 'Positive', className: 'border-[#4fdbc8]/20 bg-[#4fdbc8]/10 text-[#4fdbc8]' };
+  return { label: 'Positive', className: 'border-[brand-whatsapp]/20 bg-[brand-whatsapp]/10 text-[brand-whatsapp]' };
 }
 
 function AiReplyBlock({
@@ -60,7 +63,7 @@ function AiReplyBlock({
         ? styles.aiReplyPanelSecondary
         : styles.aiReplyPanelTertiary;
   const accent =
-    variant === 'primary' ? 'text-[#d0bcff]' : variant === 'secondary' ? 'text-[#4cd7f6]' : 'text-[#4fdbc8]';
+    variant === 'primary' ? 'text-brand-instagram' : variant === 'secondary' ? 'text-brand-facebook' : 'text-brand-whatsapp';
 
   return (
     <div className={`${styles.aiReplyPanel} ${panelClass} p-4`}>
@@ -68,7 +71,7 @@ function AiReplyBlock({
         <Bot className="h-3.5 w-3.5" />
         <span className={styles.labelCaps}>AI suggested reply</span>
       </div>
-      <p className="font-mono text-xs italic leading-relaxed text-[#cbc3d7]">&ldquo;{reply}&rdquo;</p>
+      <p className="font-mono text-xs italic leading-relaxed text-muted-foreground">&ldquo;{reply}&rdquo;</p>
     </div>
   );
 }
@@ -80,6 +83,9 @@ export function CommentThreadModal({
   campaignCaption,
   comments,
   rootCommentId,
+  onBuy,
+  onConnect,
+  actionLoadingId,
 }: CommentThreadModalProps) {
   if (!open || !rootCommentId) return null;
 
@@ -88,11 +94,11 @@ export function CommentThreadModal({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10">
-      <div className="absolute inset-0 bg-[#15121b]/80 backdrop-blur-md" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 bg-white/80 backdrop-blur-md" onClick={onClose} aria-hidden />
       <div
-        className={`${styles.glassCard} relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border-[#d0bcff]/20 shadow-2xl`}
+        className={`${styles.glassCard} relative z-10 flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border-brand-instagram/20 shadow-2xl`}
       >
-        <div className="flex items-center justify-between border-b border-white/10 bg-[#211e27]/50 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-white/10 bg-muted/50 px-6 py-4">
           <h3 className="text-lg font-bold">Conversation thread</h3>
           <button
             type="button"
@@ -105,8 +111,8 @@ export function CommentThreadModal({
         </div>
 
         <div className={`${styles.customScrollbar} flex-1 space-y-8 overflow-y-auto p-6`}>
-          <div className="rounded-xl border border-[#d0bcff]/20 bg-[#d0bcff]/5 p-4">
-            <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-[#d0bcff]">
+          <div className="rounded-xl border border-brand-instagram/20 bg-brand-instagram/5 p-4">
+            <div className="mb-2 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-widest text-brand-instagram">
               <Sparkles className="h-3.5 w-3.5" />
               {productTitle}
             </div>
@@ -123,7 +129,7 @@ export function CommentThreadModal({
                 </div>
                 <div>
                   <div className="font-bold">{root.author}</div>
-                  <div className={`${styles.labelCaps} text-[#958ea0]`}>Top-level comment</div>
+                  <div className={`${styles.labelCaps} text-muted-foreground`}>Top-level comment</div>
                 </div>
                 <span
                   className={`ml-auto rounded border px-2 py-0.5 text-[10px] font-semibold uppercase ${sentimentTag(root.sentiment, root.intent).className}`}
@@ -133,11 +139,31 @@ export function CommentThreadModal({
               </div>
               <p className="pl-[52px] text-sm leading-relaxed">{root.text}</p>
               {(root.suggestedReply || root.replyStatus?.replyText) && (
-                <div className="pl-[52px]">
+                <div className="pl-[52px] space-y-3">
                   <AiReplyBlock
                     reply={root.replyStatus?.replyText || root.suggestedReply || ''}
                     variant="primary"
                   />
+                  {(root.intent === 'purchase' || root.intent === 'question') && onBuy && onConnect && (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        disabled={actionLoadingId === root.commentId}
+                        onClick={() => onBuy(root)}
+                        className="flex-1 rounded bg-emerald-500 py-2 text-[10px] font-bold uppercase text-[#003731] disabled:opacity-50"
+                      >
+                        Send buy link
+                      </button>
+                      <button
+                        type="button"
+                        disabled={actionLoadingId === root.commentId}
+                        onClick={() => onConnect(root)}
+                        className="flex-1 rounded border border-[brand-facebook]/40 py-2 text-[10px] font-semibold uppercase text-[brand-facebook] disabled:opacity-50"
+                      >
+                        Connect
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -151,10 +177,10 @@ export function CommentThreadModal({
                         </div>
                         <div>
                           <div className="text-sm font-bold">{r.author}</div>
-                          <div className={`${styles.labelCaps} text-[#958ea0]`}>Thread reply</div>
+                          <div className={`${styles.labelCaps} text-muted-foreground`}>Thread reply</div>
                         </div>
                       </div>
-                      <p className="text-sm text-[#cbc3d7]">{r.text}</p>
+                      <p className="text-sm text-muted-foreground">{r.text}</p>
                       {(r.suggestedReply || r.replyStatus?.replyText) && (
                         <AiReplyBlock
                           reply={r.replyStatus?.replyText || r.suggestedReply || ''}

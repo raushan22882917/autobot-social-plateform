@@ -6,7 +6,7 @@ function getApiKey(): string {
   return key;
 }
 
-const DEFAULT_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+const DEFAULT_MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
 
 function parseGeminiJsonText<T>(text: string): T {
   const cleaned = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
@@ -114,7 +114,7 @@ export async function analyzePostComments(input: {
   }
 
   const list = input.comments
-    .slice(0, 80)
+    .slice(0, 150)
     .map((c, i) => {
       const thread = c.isReply
         ? ` (THREAD REPLY to @${c.parentAuthor || 'parent'} id=${c.parentCommentId})`

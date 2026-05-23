@@ -1,6 +1,11 @@
 export type UserRole = 'superadmin' | 'owner' | 'admin';
 export type SubscriptionPlan = 'free' | 'starter' | 'pro' | 'enterprise';
-export type SocialPlatform = 'instagram' | 'facebook' | 'youtube' | 'tiktok';
+export type SocialPlatform =
+  | 'instagram'
+  | 'facebook'
+  | 'whatsapp'
+  | 'youtube'
+  | 'google_business';
 export type PostStatus = 'pending' | 'processing' | 'published' | 'failed' | 'cancelled';
 export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
 export type CommentIntent = 'buying' | 'question' | 'praise' | 'complaint' | 'spam' | 'unknown';

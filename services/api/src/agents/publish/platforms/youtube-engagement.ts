@@ -4,6 +4,16 @@ import type { PlatformEngagement, SocialComment } from './meta-engagement';
 
 const YT = 'https://www.googleapis.com/youtube/v3';
 
+/** Accept raw video id or full YouTube URL from publish results */
+export function normalizeYouTubeVideoId(idOrUrl: string): string {
+  const s = (idOrUrl || '').trim();
+  if (/^[\w-]{11}$/.test(s)) return s;
+  const match = s.match(
+    /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/
+  );
+  return match?.[1] || s;
+}
+
 async function ytGet<T>(path: string, accessToken: string): Promise<T> {
   const res = await fetch(`${YT}${path}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -93,9 +103,10 @@ async function fetchYouTubeCommentReplies(
 }
 
 export async function fetchYouTubeEngagement(
-  videoId: string,
+  videoIdOrUrl: string,
   creds: SocialCredentials
 ): Promise<PlatformEngagement> {
+  const videoId = normalizeYouTubeVideoId(videoIdOrUrl);
   const token = await resolveToken(creds);
   const metrics: PlatformEngagement['metrics'] = {};
   const comments: SocialComment[] = [];
@@ -127,27 +138,44 @@ export async function fetchYouTubeEngagement(
   }
 
   try {
-    const threads = await ytGet<{
-      items?: Array<{
-        snippet?: {
-          topLevelComment?: {
-            id?: string;
-            snippet?: YtCommentSnippet;
-          };
+    type ThreadItem = {
+      snippet?: {
+        topLevelComment?: {
+          id?: string;
+          snippet?: YtCommentSnippet;
         };
-        replies?: {
-          comments?: Array<{
-            id?: string;
-            snippet?: YtCommentSnippet;
-          }>;
-        };
-      }>;
-    }>(
-      `/commentThreads?part=snippet,replies&videoId=${videoId}&maxResults=50&order=time`,
-      token
-    );
+      };
+      replies?: {
+        comments?: Array<{
+          id?: string;
+          snippet?: YtCommentSnippet;
+        }>;
+      };
+    };
 
-    for (const t of threads.items || []) {
+    const allThreads: ThreadItem[] = [];
+    let pageToken: string | undefined;
+
+    do {
+      const qs = new URLSearchParams({
+        part: 'snippet,replies',
+        videoId,
+        maxResults: '100',
+        order: 'time',
+        textFormat: 'plainText',
+      });
+      if (pageToken) qs.set('pageToken', pageToken);
+
+      const page = await ytGet<{
+        items?: ThreadItem[];
+        nextPageToken?: string;
+      }>(`/commentThreads?${qs}`, token);
+
+      if (page.items?.length) allThreads.push(...page.items);
+      pageToken = page.nextPageToken;
+    } while (pageToken && allThreads.length < 500);
+
+    for (const t of allThreads) {
       const top = t.snippet?.topLevelComment;
       if (!top?.id) continue;
 

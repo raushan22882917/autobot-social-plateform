@@ -45,10 +45,13 @@ const studioUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 100 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+    const ext = (file.originalname || '').toLowerCase();
+    const okMime = file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/');
+    const okExt = /\.(jpe?g|png|gif|webp|mp4|mov|webm|m4v)$/i.test(ext);
+    if (okMime || okExt) {
       cb(null, true);
     } else {
-      cb(new Error('Only image and video files are allowed'));
+      cb(new Error('Only image and video files are allowed (jpg, png, webp, mp4, mov, webm)'));
     }
   },
 });
@@ -81,7 +84,7 @@ studioRouter.get('/config', (_req, res) => {
   res.json({
     gemini: isGeminiConfigured(),
     hitem3d: isHitem3DConfigured(),
-    model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    model: process.env.GEMINI_MODEL || 'gemini-3.5-flash',
     imageModel: media.imageModel,
     veoModel: media.veoModel,
     features: {
@@ -241,6 +244,9 @@ studioRouter.post('/drafts', async (req: AuthRequest, res, next) => {
       media: sanitizeStudioMedia(req.body.media),
       platformVariants: req.body.platformVariants || {},
       tone: req.body.tone || 'engaging',
+      contentFormat: ['post', 'reel', 'story'].includes(req.body.contentFormat)
+        ? req.body.contentFormat
+        : 'post',
       status: 'draft',
       createdAt: now,
       updatedAt: now,
@@ -289,6 +295,9 @@ studioRouter.post('/drafts/:id/schedule', async (req: AuthRequest, res, next) =>
       status: 'pending',
       useAiCaption: false,
       source: 'studio',
+      contentFormat: ['post', 'reel', 'story'].includes(draft.contentFormat as string)
+        ? draft.contentFormat
+        : 'post',
       studioDraftId: draft.id,
       socialAccountIds: req.body.socialAccountIds || [],
       idempotencyKey: `publish_${postId}_v1`,

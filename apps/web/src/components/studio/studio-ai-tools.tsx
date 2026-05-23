@@ -2,14 +2,17 @@
 
 
 import { useState } from 'react';
-import { Box, ImagePlus, Sparkles, Clapperboard, Wand2, Loader2 } from 'lucide-react';
+import { ImagePlus, Sparkles, Clapperboard, Wand2, Loader2 } from 'lucide-react';
 import { apiClient, ApiError } from '@/lib/api';
 
 type MediaItem = { type: 'image' | 'video' | 'model'; url: string; name: string };
 
+type StudioContentFormat = 'post' | 'reel' | 'story';
+
 interface StudioAiToolsProps {
   token: string | null;
-  aspectRatio: '1:1' | '9:16' | '16:9';
+  contentFormat: StudioContentFormat;
+  aspectRatio: '1:1' | '9:16';
   features: {
     imageGenerate?: boolean;
     imageEnhance?: boolean;
@@ -24,6 +27,7 @@ interface StudioAiToolsProps {
 
 export function StudioAiTools({
   token,
+  contentFormat,
   aspectRatio,
   features,
   selectedImageUrl,
@@ -54,17 +58,17 @@ export function StudioAiTools({
   }
 
   return (
-    <div className="mt-4 space-y-3 rounded-2xl border border-white/10 bg-[#1d1a23]/80 p-4">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-[#d0bcff]">AI media tools</p>
+    <div className="mt-4 space-y-3 rounded-2xl border border-border bg-muted p-4">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-brand-instagram">AI media tools</p>
 
-      {features.imageEnhance && (
+      {contentFormat === 'post' && features.imageEnhance && (
         <div className="space-y-2">
-          <label className="flex items-center gap-2 text-xs font-medium text-[#cbc3d7]">
-            <Wand2 className="h-3.5 w-3.5 text-[#d0bcff]" />
+          <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <Wand2 className="h-3.5 w-3.5 text-brand-instagram" />
             Enhance image (Gemini)
           </label>
           <input
-            className="w-full rounded-lg border border-white/10 bg-[#15121b] px-3 py-2 text-xs text-white placeholder:text-[#958ea0]"
+            className="field-input w-full py-2 text-xs"
             placeholder="e.g. brighter lighting, white background, premium look"
             value={enhancePrompt}
             onChange={(e) => setEnhancePrompt(e.target.value)}
@@ -79,25 +83,25 @@ export function StudioAiTools({
                 onMessage({ type: 'ok', text: 'Image enhanced with Gemini' });
               })
             }
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-white/10 px-3 py-2 text-xs font-medium text-white transition hover:bg-white/15 disabled:opacity-40"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-facebook/10 px-3 py-2 text-xs font-medium text-brand-facebook transition hover:bg-brand-facebook/15 disabled:opacity-40"
           >
             {busy === 'enhance' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
             Enhance selected image
           </button>
           {!selectedImageUrl && (
-            <p className="text-[10px] text-[#958ea0]">Upload or select an image in media assets first.</p>
+            <p className="text-[10px] text-muted-foreground">Upload or select an image in media assets first.</p>
           )}
         </div>
       )}
 
-      {features.imageGenerate && (
-        <div className="space-y-2 border-t border-white/5 pt-3">
-          <label className="flex items-center gap-2 text-xs font-medium text-[#cbc3d7]">
-            <ImagePlus className="h-3.5 w-3.5 text-[#d0bcff]" />
+      {(contentFormat === 'post' || contentFormat === 'story') && features.imageGenerate && (
+        <div className="space-y-2 border-t border-border pt-3">
+          <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <ImagePlus className="h-3.5 w-3.5 text-brand-instagram" />
             Generate image (Gemini)
           </label>
           <textarea
-            className="min-h-[56px] w-full resize-none rounded-lg border border-white/10 bg-[#15121b] px-3 py-2 text-xs text-white placeholder:text-[#958ea0]"
+            className="field-input min-h-[56px] w-full resize-none py-2 text-xs"
             placeholder="Describe the product shot you want…"
             value={imagePrompt}
             onChange={(e) => setImagePrompt(e.target.value)}
@@ -116,7 +120,7 @@ export function StudioAiTools({
                 }
               )
             }
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#d0bcff]/20 px-3 py-2 text-xs font-medium text-[#d0bcff] transition hover:bg-[#d0bcff]/30 disabled:opacity-40"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-instagram/15 px-3 py-2 text-xs font-medium text-brand-instagram transition hover:bg-brand-instagram/25 disabled:opacity-40"
           >
             {busy === 'gen-image' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <ImagePlus className="h-3.5 w-3.5" />}
             Generate image
@@ -124,14 +128,14 @@ export function StudioAiTools({
         </div>
       )}
 
-      {features.videoGenerate && (
-        <div className="space-y-2 border-t border-white/5 pt-3">
-          <label className="flex items-center gap-2 text-xs font-medium text-[#cbc3d7]">
-            <Clapperboard className="h-3.5 w-3.5 text-[#4cd7f6]" />
+      {(contentFormat === 'reel' || contentFormat === 'story') && features.videoGenerate && (
+        <div className="space-y-2 border-t border-border pt-3">
+          <label className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+            <Clapperboard className="h-3.5 w-3.5 text-brand-facebook" />
             Generate video (Veo)
           </label>
           <textarea
-            className="min-h-[56px] w-full resize-none rounded-lg border border-white/10 bg-[#15121b] px-3 py-2 text-xs text-white placeholder:text-[#958ea0]"
+            className="field-input min-h-[56px] w-full resize-none py-2 text-xs"
             placeholder="Describe motion / scene for a short product video…"
             value={videoPrompt}
             onChange={(e) => setVideoPrompt(e.target.value)}
@@ -155,39 +159,15 @@ export function StudioAiTools({
                 }
               )
             }
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4cd7f6]/15 px-3 py-2 text-xs font-medium text-[#4cd7f6] transition hover:bg-[#4cd7f6]/25 disabled:opacity-40"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-facebook/15 px-3 py-2 text-xs font-medium text-brand-facebook transition hover:bg-brand-facebook/25 disabled:opacity-40"
           >
             {busy === 'gen-video' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Clapperboard className="h-3.5 w-3.5" />}
             Generate video {selectedImageUrl ? '(image-to-video)' : ''}
           </button>
-          <p className="text-[10px] text-[#958ea0]">Uses Veo — requires paid Gemini API with video access.</p>
+          <p className="text-[10px] text-muted-foreground">Uses Veo — requires paid Gemini API with video access.</p>
         </div>
       )}
 
-      {features.imageTo3d && (
-        <div className="space-y-2 border-t border-white/5 pt-3">
-          <label className="flex items-center gap-2 text-xs font-medium text-[#cbc3d7]">
-            <Box className="h-3.5 w-3.5 text-[#4fdbc8]" />
-            Image to 3D (Hitem3D)
-          </label>
-          <button
-            type="button"
-            disabled={disabled || !!busy || !selectedImageUrl}
-            onClick={() =>
-              void run('3d', () => apiClient.studioImageTo3D(token!, selectedImageUrl!), (r) => {
-                onMediaAdded(r.model);
-                if (r.preview) onMediaAdded(r.preview);
-                onMessage({ type: 'ok', text: '3D model ready (GLB saved to your media)' });
-              })
-            }
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4fdbc8]/15 px-3 py-2 text-xs font-medium text-[#4fdbc8] transition hover:bg-[#4fdbc8]/25 disabled:opacity-40"
-          >
-            {busy === '3d' ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Box className="h-3.5 w-3.5" />}
-            Convert to 3D model
-          </button>
-          <p className="text-[10px] text-[#958ea0]">Uses your Hitem3D API keys — typically 1–5 minutes.</p>
-        </div>
-      )}
     </div>
   );
 }

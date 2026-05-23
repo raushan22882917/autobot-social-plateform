@@ -48,7 +48,7 @@ export default function NotificationsPage() {
       sortable: true,
       cell: (n) => (
         <div className="flex items-start gap-3">
-          {!n.read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-violet-400" aria-hidden />}
+          {!n.read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-brand-instagram" aria-hidden />}
           <div>
             <p className={`font-medium ${!n.read ? 'text-foreground' : 'text-muted-foreground'}`}>{n.title}</p>
             <p className="mt-0.5 text-sm text-muted-foreground line-clamp-2">{n.body}</p>
@@ -60,7 +60,7 @@ export default function NotificationsPage() {
       key: 'read',
       header: 'State',
       cell: (n) => (
-        <span className={`rounded-full px-2 py-0.5 text-xs ${n.read ? 'bg-white/10 text-muted-foreground' : 'bg-violet-500/20 text-violet-300'}`}>
+        <span className={`rounded-full px-2 py-0.5 text-xs ${n.read ? 'bg-white/10 text-muted-foreground' : 'bg-brand-instagram/15 text-brand-instagram'}`}>
           {n.read ? 'Read' : 'Unread'}
         </span>
       ),
@@ -86,7 +86,7 @@ export default function NotificationsPage() {
         description={unreadCount ? `${unreadCount} unread` : 'All caught up'}
         actions={
           <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm">
-            <Bell className="h-4 w-4 text-violet-400" />
+            <Bell className="h-4 w-4 text-brand-instagram" />
             {notifications.length} total
           </div>
         }
@@ -114,7 +114,7 @@ export default function NotificationsPage() {
         page={list.page}
         totalPages={list.totalPages}
         onPageChange={list.setPage}
-        extra={<button type="button" onClick={load} className="text-xs text-violet-400 hover:underline">Refresh</button>}
+        extra={<button type="button" onClick={load} className="text-xs text-brand-instagram hover:underline">Refresh</button>}
       />
 
       {!loading && notifications.length === 0 ? (

@@ -7,7 +7,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <ProtectedRoute>
       <RoleGuard>
-        <div className="flex min-h-screen bg-[#060a12]">
+        <div className="flex min-h-screen bg-white">
           <Sidebar />
           <div className="flex flex-1 flex-col pl-64">
             <TopBar />

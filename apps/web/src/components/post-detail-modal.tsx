@@ -188,7 +188,7 @@ export function PostDetailModal({
               type="button"
               onClick={() => setTab(t)}
               className={`rounded-lg px-3 py-1.5 text-sm capitalize ${
-                tab === t ? 'bg-violet-500/30 text-violet-200' : 'text-muted-foreground hover:bg-white/5'
+                tab === t ? 'bg-brand-instagram/30 text-brand-instagram' : 'text-muted-foreground hover:bg-white/5'
               }`}
             >
               {t}
@@ -221,14 +221,14 @@ export function PostDetailModal({
                           href={p.platformPostUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-violet-300 flex items-center gap-1"
+                          className="text-xs text-brand-instagram flex items-center gap-1"
                         >
                           Open <ExternalLink className="h-3 w-3" />
                         </a>
                       )}
                     </div>
                     {p.error ? (
-                      <p className="text-xs text-amber-400">{p.error}</p>
+                      <p className="text-xs text-brand-google-yellow">{p.error}</p>
                     ) : (
                       <p className="text-xs text-muted-foreground">
                         {p.metrics.likes != null && `${p.metrics.likes} likes · `}
@@ -266,17 +266,17 @@ export function PostDetailModal({
               <p className="text-sm text-muted-foreground py-6 text-center">No comments yet on connected platforms.</p>
             )}
             {purchaseLeads > 0 && (
-              <p className="text-xs text-emerald-400 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-2">
+              <p className="text-xs text-brand-whatsapp rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-2">
                 {purchaseLeads} comment{purchaseLeads > 1 ? 's' : ''} show purchase intent — check Sales tab.
               </p>
             )}
-            {analysisSummary && <p className="text-sm text-violet-200">{analysisSummary}</p>}
+            {analysisSummary && <p className="text-sm text-brand-instagram">{analysisSummary}</p>}
             {allComments.map((c) => {
               const ins = insightFor(c.id);
               return (
                 <div key={c.id} className="rounded-xl border border-white/10 p-3 space-y-2">
                   <div className="flex justify-between gap-2">
-                    <span className="text-xs font-medium text-violet-200">
+                    <span className="text-xs font-medium text-brand-instagram">
                       @{c.author} · <span className="capitalize text-muted-foreground">{c.platform}</span>
                     </span>
                     {ins && (
@@ -293,7 +293,7 @@ export function PostDetailModal({
                   {ins && (
                     <>
                       <p className="text-xs text-muted-foreground">{ins.reason}</p>
-                      <div className="rounded-lg bg-white/5 p-2 text-xs text-violet-100">{ins.suggestedReply}</div>
+                      <div className="rounded-lg bg-white/5 p-2 text-xs text-brand-instagram">{ins.suggestedReply}</div>
                       <div className="flex flex-wrap gap-2">
                         {ins.intent === 'purchase' && (
                           <Button
@@ -355,8 +355,8 @@ export function PostDetailModal({
               </Button>
             </div>
             {purchaseAssist && (
-              <div className="space-y-3 rounded-xl border border-violet-500/20 bg-violet-500/5 p-4 text-sm">
-                <p className="font-medium text-violet-200">{purchaseAssist.summary}</p>
+              <div className="space-y-3 rounded-xl border border-brand-instagram/20 bg-brand-instagram/5 p-4 text-sm">
+                <p className="font-medium text-brand-instagram">{purchaseAssist.summary}</p>
                 <ol className="list-decimal pl-5 space-y-1 text-muted-foreground">
                   {purchaseAssist.steps.map((s, i) => (
                     <li key={i}>{s}</li>
@@ -374,7 +374,7 @@ export function PostDetailModal({
                   href={purchaseAssist.checkoutUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-violet-300 text-sm hover:underline"
+                  className="inline-flex items-center gap-1 text-brand-instagram text-sm hover:underline"
                 >
                   Open checkout link <ExternalLink className="h-3 w-3" />
                 </a>
@@ -398,7 +398,7 @@ function MetricCard({
 }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-center">
-      <Icon className="h-4 w-4 mx-auto text-violet-400 mb-1" />
+      <Icon className="h-4 w-4 mx-auto text-brand-instagram mb-1" />
       <p className="text-lg font-bold">{value}</p>
       <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{label}</p>
     </div>

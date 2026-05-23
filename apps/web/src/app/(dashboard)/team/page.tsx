@@ -55,7 +55,7 @@ export default function TeamPage() {
   if (!isOwner(user?.role)) {
     return (
       <div className="flex flex-1 items-center justify-center p-12">
-        <p className="text-sm text-white/50">Only store owners can manage the team.</p>
+        <p className="text-sm text-muted-foreground">Only store owners can manage the team.</p>
       </div>
     );
   }
@@ -69,7 +69,7 @@ export default function TeamPage() {
 
       <div className="glass-card flex flex-wrap items-end gap-3 p-5">
         <div className="min-w-[240px] flex-1">
-          <label className="mb-1.5 block text-sm font-medium text-white/70">Invite by email</label>
+          <label className="mb-1.5 block text-sm font-medium text-foreground/80">Invite by email</label>
           <input
             type="email"
             value={inviteEmail}
@@ -86,7 +86,7 @@ export default function TeamPage() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-violet-500 border-t-transparent" />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand-instagram border-t-transparent" />
         </div>
       ) : members.length === 0 ? (
         <EmptyState
@@ -100,10 +100,10 @@ export default function TeamPage() {
             <div key={m.uid} className="flex items-center justify-between gap-4 px-5 py-4">
               <div>
                 <p className="font-medium">{m.displayName || m.email}</p>
-                <p className="text-xs text-white/45">{m.email}</p>
+                <p className="text-xs text-muted-foreground">{m.email}</p>
               </div>
               <div className="flex items-center gap-3">
-                <span className="badge badge-violet">{getRoleLabel(m.role)}</span>
+                <span className="badge badge-instagram">{getRoleLabel(m.role)}</span>
                 {m.uid !== user?.uid && m.role !== 'owner' && (
                   <button
                     type="button"

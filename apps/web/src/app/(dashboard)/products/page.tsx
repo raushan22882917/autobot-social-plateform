@@ -97,11 +97,11 @@ export default function ProductsPage() {
       sortable: true,
       cell: (p) => (
         <motion.div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-500/20">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-instagram/15">
             {p.images?.[0]?.url ? (
               <img src={p.images[0].url} alt="" className="h-full w-full rounded-lg object-cover" />
             ) : (
-              <Package className="h-5 w-5 text-violet-400" />
+              <Package className="h-5 w-5 text-brand-instagram" />
             )}
           </div>
           <div>
@@ -115,7 +115,7 @@ export default function ProductsPage() {
       key: 'price',
       header: 'Price',
       sortable: true,
-      cell: (p) => <span className="font-semibold text-violet-400">₹{p.price.toLocaleString('en-IN')}</span>,
+      cell: (p) => <span className="font-semibold text-brand-instagram">₹{p.price.toLocaleString('en-IN')}</span>,
     },
     {
       key: 'inventory',
@@ -166,7 +166,7 @@ export default function ProductsPage() {
               <button
                 type="button"
                 onClick={() => setView('table')}
-                className={`rounded-lg p-2 ${view === 'table' ? 'bg-violet-500/30 text-violet-200' : 'text-muted-foreground'}`}
+                className={`rounded-lg p-2 ${view === 'table' ? 'bg-brand-instagram/30 text-brand-instagram' : 'text-muted-foreground'}`}
                 aria-label="Table view"
               >
                 <List className="h-4 w-4" />
@@ -174,7 +174,7 @@ export default function ProductsPage() {
               <button
                 type="button"
                 onClick={() => setView('grid')}
-                className={`rounded-lg p-2 ${view === 'grid' ? 'bg-violet-500/30 text-violet-200' : 'text-muted-foreground'}`}
+                className={`rounded-lg p-2 ${view === 'grid' ? 'bg-brand-instagram/30 text-brand-instagram' : 'text-muted-foreground'}`}
                 aria-label="Grid view"
               >
                 <LayoutGrid className="h-4 w-4" />
@@ -249,25 +249,25 @@ export default function ProductsPage() {
           {list.paginated.length === 0 && products.length > 0 && (
             <div className="col-span-full glass-card py-8 text-center text-sm text-muted-foreground">
               No products match filters.{' '}
-              <button type="button" className="text-violet-400 underline" onClick={list.reset}>
+              <button type="button" className="text-brand-instagram underline" onClick={list.reset}>
                 Clear filters
               </button>
             </div>
           )}
           {list.paginated.map((p) => (
             <div key={p.id} className="glass-card overflow-hidden">
-              <motion.div className="flex h-32 items-center justify-center bg-gradient-to-br from-violet-500/20 to-cyan-500/20">
+              <motion.div className="flex h-32 items-center justify-center bg-gradient-to-br from-brand-instagram/15 to-brand-facebook/15">
                 {p.images?.[0]?.url ? (
                   <img src={p.images[0].url} alt="" className="h-full w-full object-cover" />
                 ) : (
-                  <Package className="h-12 w-12 text-violet-400/50" />
+                  <Package className="h-12 w-12 text-brand-instagram/50" />
                 )}
               </motion.div>
               <div className="p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h3 className="font-semibold">{p.title}</h3>
-                    <p className="text-lg font-bold text-violet-400">₹{p.price.toLocaleString('en-IN')}</p>
+                    <p className="text-lg font-bold text-brand-instagram">₹{p.price.toLocaleString('en-IN')}</p>
                   </div>
                   <StatusBadge status={p.status} />
                 </div>

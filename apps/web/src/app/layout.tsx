@@ -7,15 +7,16 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: 'AutoBot360 — AI Social Commerce',
-  description: 'AI-powered social selling automation platform',
+  title: 'AutoBot360 | AI-Powered Social Commerce',
+  description:
+    'The world\'s first multi-platform AI commerce engine. Automate engagement and checkout across Instagram, WhatsApp, Facebook and more.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${inter.variable} font-sans`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>

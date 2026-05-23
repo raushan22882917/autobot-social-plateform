@@ -3,13 +3,14 @@
 import { cn } from '@/lib/utils';
 
 const PRESETS: Record<string, string> = {
-  active: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  published: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  delivered: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  confirmed: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
-  pending: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  active: 'bg-emerald-500/20 text-brand-whatsapp border-emerald-500/30',
+  published: 'bg-emerald-500/20 text-brand-whatsapp border-emerald-500/30',
+  delivered: 'bg-emerald-500/20 text-brand-whatsapp border-emerald-500/30',
+  confirmed: 'bg-emerald-500/20 text-brand-whatsapp border-emerald-500/30',
+  pending: 'bg-amber-500/20 text-brand-google-yellow border-amber-500/30',
+  pending_payment: 'bg-amber-500/20 text-brand-google-yellow border-amber-500/30',
   processing: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  shipped: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+  shipped: 'bg-cyan-500/20 text-brand-facebook border-cyan-500/30',
   failed: 'bg-red-500/20 text-red-400 border-red-500/30',
   cancelled: 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',
   archived: 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30',

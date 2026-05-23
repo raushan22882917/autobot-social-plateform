@@ -16,7 +16,8 @@
     "build": "npm run build --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "clean": "rm -rf node_modules apps/web/node_modules apps/web/.next services/api/node_modules services/api/dist packages/shared/node_modules packages/shared/dist",
+    "clean": "rm -rf apps/web/.next services/api/dist packages/shared/dist",
+    "clean:all": "npm run clean && rm -rf node_modules apps/web/node_modules services/api/node_modules packages/shared/node_modules",
     "firebase:check": "node scripts/check-firebase-setup.mjs"
   },
   "devDependencies": {

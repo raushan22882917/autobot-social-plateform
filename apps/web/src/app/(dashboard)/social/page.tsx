@@ -2,46 +2,13 @@
 
 import { Suspense, useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
-
 import { motion } from 'framer-motion';
-import { Instagram, Facebook, Youtube, Link2, Unlink, AlertCircle, CheckCircle2 } from 'lucide-react';
-
-function TikTokIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.76a4.85 4.85 0 0 1-1.01-.07z" />
-    </svg>
-  );
-}
+import { Instagram, Facebook, Youtube, Link2, Unlink, AlertCircle, CheckCircle2, Settings2 } from 'lucide-react';
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.869 1.171l-.346.217-3.597-.094 1.447 3.828.6.092c1.644.007 3.203.635 4.382 1.77 1.18 1.136 1.844 2.652 1.844 4.248 0 .975-.186 1.923-.537 2.82l-.088.345 3.601.545.092-.003a9.936 9.936 0 001.449-19.726z" />
-    </svg>
-  );
-}
-
-function LinkedInIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.722-2.004 1.418-.103.249-.129.597-.129.946v5.441h-3.554s.05-8.736 0-9.646h3.554v1.364c.43-.664 1.199-1.608 2.928-1.608 2.136 0 3.745 1.393 3.745 4.385v5.505zM5.337 9.433c-1.144 0-1.915-.758-1.915-1.704 0-.951.77-1.707 1.968-1.707 1.197 0 1.911.756 1.935 1.704 0 .946-.738 1.707-1.988 1.707zm1.946 11.019H3.39V9.787h3.893v10.665zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.225 0z" />
-    </svg>
-  );
-}
-
-function PinterestIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 0C5.373 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
-    </svg>
-  );
-}
-
-function TelegramIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295-.042 0-.084 0-.126-.01l.214-3.03 5.514-4.98c.24-.213-.054-.328-.373-.115L8.48 10.384l-2.99-.936c-.65-.203-.658-.65.135-.968l11.703-4.51c.54-.203 1.01.128.84.943z" />
     </svg>
   );
 }
@@ -55,38 +22,23 @@ function GoogleBusinessIcon({ className }: { className?: string }) {
 }
 
 import { useAuth } from '@/hooks/use-auth';
-import { apiClient, ApiError } from '@/lib/api';
+import { apiClient, ApiError, type Product, type SocialAccount } from '@/lib/api';
 import { Button } from '@/components/ui/button';
+import { Modal } from '@/components/ui/Modal';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { PageHeader, DataToolbar, DataTable, StatusBadge, type Column } from '@/components/data';
 import { useListControls } from '@/hooks/use-list-controls';
 
-/** OAuth supported by API (see services/api social-connect) */
-const OAUTH_PLATFORMS = [
-  { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'from-pink-500 to-purple-600' },
-  { id: 'facebook', name: 'Facebook Page', icon: Facebook, color: 'from-blue-600 to-blue-800' },
-  { id: 'youtube', name: 'YouTube', icon: Youtube, color: 'from-red-500 to-red-700' },
-  { id: 'tiktok', name: 'TikTok', icon: TikTokIcon, color: 'from-gray-800 to-gray-950' },
-  { id: 'linkedin', name: 'LinkedIn', icon: LinkedInIcon, color: 'from-blue-700 to-blue-900' },
+const PLATFORMS = [
+  { id: 'instagram', name: 'Instagram', icon: Instagram, color: 'from-[#833AB4] via-[#E4405F] to-[#F77737]' },
+  { id: 'facebook', name: 'Facebook', icon: Facebook, color: 'from-[#1877F2] to-[#0d65d9]' },
+  { id: 'youtube', name: 'YouTube', icon: Youtube, color: 'from-[#FF0000] to-[#CC0000]' },
+  { id: 'google_business', name: 'Google Business', icon: GoogleBusinessIcon, color: 'from-[#4285F4] via-[#EA4335] to-[#34A853]' },
+  { id: 'whatsapp', name: 'WhatsApp', icon: WhatsAppIcon, color: 'from-[#25D366] to-[#128C7E]' },
 ] as const;
-
-const COMING_SOON_PLATFORMS = [
-  { id: 'whatsapp', name: 'WhatsApp Business', icon: WhatsAppIcon, color: 'from-green-500 to-teal-600' },
-  { id: 'pinterest', name: 'Pinterest', icon: PinterestIcon, color: 'from-red-600 to-red-700' },
-  { id: 'telegram', name: 'Telegram', icon: TelegramIcon, color: 'from-cyan-500 to-blue-600' },
-  { id: 'google_business', name: 'Google Business', icon: GoogleBusinessIcon, color: 'from-yellow-500 to-red-500' },
-] as const;
-
-const PLATFORMS = [...OAUTH_PLATFORMS, ...COMING_SOON_PLATFORMS];
 
 type PlatformId = (typeof PLATFORMS)[number]['id'];
-
-interface SocialAccount {
-  id: string;
-  platform: string;
-  username: string;
-  displayName?: string;
-  status: string;
-}
 
 function SocialContent() {
   const { token } = useAuth();
@@ -95,9 +47,38 @@ function SocialContent() {
   const [accounts, setAccounts] = useState<SocialAccount[]>([]);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [platformStatus, setPlatformStatus] = useState<
-    Record<string, { configured: boolean; canConnect?: boolean }>
+    Record<string, { configured?: boolean; canConnect?: boolean; envKeys?: string[] }>
   >({});
+  const [statusLoading, setStatusLoading] = useState(true);
+  const [statusError, setStatusError] = useState<string | null>(null);
   const [banner, setBanner] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const [whatsappOpen, setWhatsappOpen] = useState(false);
+  const [whatsappSettingsOpen, setWhatsappSettingsOpen] = useState(false);
+  const [whatsappToken, setWhatsappToken] = useState('');
+  const [whatsappPhoneId, setWhatsappPhoneId] = useState('');
+  const [whatsappBusinessId, setWhatsappBusinessId] = useState('');
+
+  const [waNotifyPhone, setWaNotifyPhone] = useState('');
+  const [waAlertsEnabled, setWaAlertsEnabled] = useState(true);
+  const [waAutoReplyEnabled, setWaAutoReplyEnabled] = useState(true);
+  const [waDefaultProductId, setWaDefaultProductId] = useState('');
+  const [waPublishRecipients, setWaPublishRecipients] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [waSaving, setWaSaving] = useState(false);
+
+  const [metaPendingId, setMetaPendingId] = useState<string | null>(null);
+  const [metaPendingPlatform, setMetaPendingPlatform] = useState<string | null>(null);
+  const [metaPages, setMetaPages] = useState<
+    { id: string; name: string; hasInstagram: boolean; igUsername?: string }[]
+  >([]);
+  const [metaPagesLoading, setMetaPagesLoading] = useState(false);
+
+  const [googlePendingId, setGooglePendingId] = useState<string | null>(null);
+  const [googleAccounts, setGoogleAccounts] = useState<
+    { name: string; accountName: string; type?: string }[]
+  >([]);
+  const [googleAccountsLoading, setGoogleAccountsLoading] = useState(false);
 
   const accountList = useListControls({
     items: accounts,
@@ -111,48 +92,212 @@ function SocialContent() {
     pageSize: 10,
   });
 
+  const loadWhatsAppSetup = useCallback(() => {
+    if (!token) return;
+    apiClient
+      .getWhatsAppSetup(token)
+      .then((s) => {
+        setWaNotifyPhone(s.whatsappNotifyPhone || '');
+        setWaAlertsEnabled(s.whatsappAlertsEnabled);
+        setWaAutoReplyEnabled(s.whatsappAutoReplyEnabled);
+        setWaDefaultProductId(s.whatsappDefaultProductId || '');
+        setWaPublishRecipients(s.whatsappPublishRecipients || '');
+      })
+      .catch(() => {});
+  }, [token]);
+
+  const loadStatus = useCallback(() => {
+    if (!token) {
+      setStatusLoading(false);
+      return;
+    }
+    setStatusLoading(true);
+    apiClient
+      .getSocialStatus(token)
+      .then((r) => {
+        setPlatformStatus(r.platforms);
+        setStatusError(null);
+      })
+      .catch((err) => {
+        setStatusError(err instanceof ApiError ? err.message : 'API unavailable');
+      })
+      .finally(() => setStatusLoading(false));
+  }, [token]);
+
   const load = useCallback(() => {
     if (!token) return;
     apiClient.getSocialAccounts(token).then((r) => setAccounts(r.accounts as SocialAccount[]));
-    apiClient.getSocialStatus(token).then((r) => setPlatformStatus(r.platforms)).catch(() => {});
-  }, [token]);
+    apiClient.getProducts(token).then((r) => setProducts(r.products || [])).catch(() => {});
+    loadStatus();
+    loadWhatsAppSetup();
+  }, [token, loadStatus, loadWhatsAppSetup]);
 
   useEffect(() => {
     load();
   }, [load]);
 
   useEffect(() => {
+    const onFocus = () => loadStatus();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [loadStatus]);
+
+  useEffect(() => {
     const connected = searchParams.get('connected');
     const error = searchParams.get('error');
-    if (connected) {
-      setBanner({ type: 'success', message: `${connected} connected successfully.` });
+    const metaPending = searchParams.get('metaPending');
+    const googlePending = searchParams.get('googlePending');
+    const platform = searchParams.get('platform');
+
+    if (metaPending && platform && token) {
+      setMetaPendingId(metaPending);
+      setMetaPendingPlatform(platform);
+      setMetaPagesLoading(true);
+      apiClient
+        .getMetaPendingPages(token, metaPending)
+        .then((r) => setMetaPages(r.pages))
+        .catch((err) => {
+          setBanner({ type: 'error', message: err instanceof ApiError ? err.message : 'Session expired' });
+        })
+        .finally(() => setMetaPagesLoading(false));
+      window.history.replaceState({}, '', '/social');
+    } else if (googlePending && token) {
+      setGooglePendingId(googlePending);
+      setGoogleAccountsLoading(true);
+      apiClient
+        .getGoogleBusinessPendingAccounts(token, googlePending)
+        .then((r) => setGoogleAccounts(r.accounts))
+        .catch((err) => {
+          setBanner({ type: 'error', message: err instanceof ApiError ? err.message : 'Session expired' });
+        })
+        .finally(() => setGoogleAccountsLoading(false));
+      window.history.replaceState({}, '', '/social');
+    } else if (connected) {
+      setBanner({ type: 'success', message: `${connected} connected` });
       load();
       window.history.replaceState({}, '', '/social');
     } else if (error) {
-      setBanner({ type: 'error', message: decodeURIComponent(error) });
+      const decoded = decodeURIComponent(error);
+      const isQuota = /quota exceeded|requests per minute/i.test(decoded);
+      const friendly = isQuota
+        ? 'Google Business rate limit — wait 2–3 minutes, then click Connect once. Avoid retrying quickly.'
+        : decoded;
+      if (isQuota) {
+        sessionStorage.setItem('google_business_connect_until', String(Date.now() + 120_000));
+      }
+      setBanner({ type: 'error', message: friendly });
       window.history.replaceState({}, '', '/social');
     }
-  }, [searchParams, load]);
+  }, [searchParams, load, token]);
 
   async function connect(platform: PlatformId) {
-    if (!token) {
-      setBanner({ type: 'error', message: 'Please sign in again.' });
+    if (!token) return;
+
+    if (platform === 'whatsapp') {
+      setWhatsappOpen(true);
       return;
     }
-    if (COMING_SOON_PLATFORMS.some((p) => p.id === platform)) return;
+
+    if (platform === 'google_business') {
+      const cooldownKey = 'google_business_connect_until';
+      const until = Number(sessionStorage.getItem(cooldownKey) || 0);
+      if (until > Date.now()) {
+        const secs = Math.ceil((until - Date.now()) / 1000);
+        setBanner({
+          type: 'error',
+          message: `Please wait ${secs}s before connecting Google Business again (API rate limit).`,
+        });
+        return;
+      }
+    }
 
     setConnecting(platform);
     setBanner(null);
     try {
       const { authUrl, mode } = await apiClient.getSocialConnectUrl(token, platform);
       if (mode === 'oauth' && authUrl) {
+        if (platform === 'google_business') {
+          sessionStorage.setItem('google_business_connect_until', String(Date.now() + 60_000));
+        }
         window.location.href = authUrl;
         return;
       }
-      throw new Error('OAuth URL not available. Add API keys in services/api/.env');
+      throw new Error('Not configured');
     } catch (err) {
-      const msg = err instanceof ApiError ? err.message : 'Could not start connection';
-      setBanner({ type: 'error', message: msg });
+      setBanner({ type: 'error', message: err instanceof ApiError ? err.message : 'Connect failed' });
+      setConnecting(null);
+    }
+  }
+
+  async function submitWhatsAppConnect(e: React.FormEvent) {
+    e.preventDefault();
+    if (!token) return;
+    setConnecting('whatsapp');
+    try {
+      await apiClient.connectWhatsApp(token, {
+        accessToken: whatsappToken.trim(),
+        phoneNumberId: whatsappPhoneId.trim(),
+        businessAccountId: whatsappBusinessId.trim() || undefined,
+      });
+      setWhatsappOpen(false);
+      setBanner({ type: 'success', message: 'WhatsApp connected' });
+      load();
+    } catch (err) {
+      setBanner({ type: 'error', message: err instanceof ApiError ? err.message : 'Failed' });
+    } finally {
+      setConnecting(null);
+    }
+  }
+
+  async function saveWhatsAppSettings(e: React.FormEvent) {
+    e.preventDefault();
+    if (!token) return;
+    setWaSaving(true);
+    try {
+      await apiClient.updateWhatsAppSettings(token, {
+        notifyPhone: waNotifyPhone,
+        alertsEnabled: waAlertsEnabled,
+        autoReplyEnabled: waAutoReplyEnabled,
+        defaultProductId: waDefaultProductId,
+        publishRecipients: waPublishRecipients,
+      });
+      setWhatsappSettingsOpen(false);
+      setBanner({ type: 'success', message: 'Saved' });
+    } catch (err) {
+      setBanner({ type: 'error', message: err instanceof ApiError ? err.message : 'Failed' });
+    } finally {
+      setWaSaving(false);
+    }
+  }
+
+  async function completeMetaPage(pageId: string) {
+    if (!token || !metaPendingId) return;
+    setConnecting(metaPendingPlatform || 'meta');
+    try {
+      await apiClient.completeMetaPageSelection(token, { pendingId: metaPendingId, pageId });
+      setMetaPendingId(null);
+      setMetaPages([]);
+      setBanner({ type: 'success', message: 'Connected' });
+      load();
+    } catch (err) {
+      setBanner({ type: 'error', message: err instanceof ApiError ? err.message : 'Failed' });
+    } finally {
+      setConnecting(null);
+    }
+  }
+
+  async function completeGoogleBusinessAccount(accountName: string) {
+    if (!token || !googlePendingId) return;
+    setConnecting('google_business');
+    try {
+      await apiClient.completeGoogleBusinessSelection(token, { pendingId: googlePendingId, accountName });
+      setGooglePendingId(null);
+      setGoogleAccounts([]);
+      setBanner({ type: 'success', message: 'Connected' });
+      load();
+    } catch (err) {
+      setBanner({ type: 'error', message: err instanceof ApiError ? err.message : 'Failed' });
+    } finally {
       setConnecting(null);
     }
   }
@@ -163,71 +308,84 @@ function SocialContent() {
     load();
   }
 
+  function openWhatsAppSettings() {
+    loadWhatsAppSetup();
+    setWhatsappSettingsOpen(true);
+  }
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       <PageHeader
-        title="Social connections"
-        description="Connect accounts via OAuth. Tokens are stored securely on the server."
+        title="Social"
+        actions={
+          <Button variant="ghost" size="sm" onClick={() => loadStatus()} disabled={statusLoading}>
+            Refresh
+          </Button>
+        }
       />
+
+      {statusError && (
+        <div className="flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {statusError}
+        </div>
+      )}
 
       {banner && (
         <div
-          className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-sm ${
+          className={`flex items-center gap-2 rounded-xl border px-4 py-3 text-sm ${
             banner.type === 'success'
               ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200'
               : 'border-red-500/30 bg-red-500/10 text-red-200'
           }`}
         >
-          {banner.type === 'success' ? (
-            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-          ) : (
-            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-          )}
-          <span>{banner.message}</span>
+          {banner.type === 'success' ? <CheckCircle2 className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+          {banner.message}
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {PLATFORMS.map((platform) => {
           const connected = accounts.find((a) => a.platform === platform.id && a.status === 'active');
-          const comingSoon = COMING_SOON_PLATFORMS.some((p) => p.id === platform.id);
-          const isOAuthPlatform = OAUTH_PLATFORMS.some((p) => p.id === platform.id);
-          const oauthReady = platformStatus[platform.id]?.configured === true;
+          const status = platformStatus[platform.id];
+          const ready = status?.canConnect === true || status?.configured === true;
           const Icon = platform.icon;
+
           return (
-            <div key={platform.id} className="glass-card p-6">
-              <div className="flex items-center gap-4">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${platform.color}`}>
-                  <Icon className="h-6 w-6 text-white" />
+            <div key={platform.id} className="glass-card p-5">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${platform.color}`}
+                >
+                  <Icon className="h-5 w-5 text-white" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold">{platform.name}</h3>
+                <div className="min-w-0 flex-1">
+                  <h3 className="font-semibold truncate">{platform.name}</h3>
                   {connected ? (
-                    <p className="text-sm text-emerald-400">
-                      @{connected.username}
-                      {connected.displayName ? ` · ${connected.displayName}` : ''}
-                    </p>
+                    <p className="truncate text-sm text-brand-whatsapp">@{connected.username}</p>
                   ) : (
-                    <p className="text-sm text-muted-foreground">
-                      {comingSoon
-                        ? 'Coming soon'
-                        : oauthReady
-                          ? 'Not connected — real OAuth'
-                          : 'Add API keys in services/api/.env'}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{ready ? 'Not connected' : 'Setup required'}</p>
                   )}
                 </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
                 {connected ? (
-                  <Button variant="ghost" size="sm" onClick={() => disconnect(connected.id)}>
-                    <Unlink className="h-4 w-4" /> Disconnect
-                  </Button>
+                  <>
+                    {platform.id === 'whatsapp' && (
+                      <Button variant="ghost" size="sm" onClick={openWhatsAppSettings}>
+                        <Settings2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button variant="ghost" size="sm" onClick={() => disconnect(connected.id)}>
+                      <Unlink className="h-4 w-4" /> Disconnect
+                    </Button>
+                  </>
                 ) : (
                   <Button
                     variant="primary"
                     size="sm"
-                    type="button"
                     loading={connecting === platform.id}
-                    disabled={comingSoon || !isOAuthPlatform}
+                    disabled={statusLoading || !ready}
                     onClick={() => void connect(platform.id)}
                   >
                     <Link2 className="h-4 w-4" /> Connect
@@ -241,17 +399,16 @@ function SocialContent() {
 
       {accounts.length > 0 && (
         <>
-          <h2 className="text-lg font-semibold">Connected accounts</h2>
           <DataToolbar
             search={accountList.search}
             onSearchChange={accountList.setSearch}
-            searchPlaceholder="Search accounts…"
+            searchPlaceholder="Search…"
             filters={[
               {
                 key: 'platform',
                 label: 'Platform',
                 options: [
-                  { value: 'all', label: 'All platforms' },
+                  { value: 'all', label: 'All' },
                   ...PLATFORMS.map((p) => ({ value: p.id, label: p.name })),
                 ],
               },
@@ -271,27 +428,22 @@ function SocialContent() {
                   key: 'platform',
                   header: 'Platform',
                   sortable: true,
-                  cell: (a) => <span className="capitalize font-medium">{a.platform}</span>,
+                  cell: (a) => <span className="capitalize">{a.platform}</span>,
                 },
                 {
                   key: 'username',
                   header: 'Account',
                   sortable: true,
-                  cell: (a) => (
-                    <div>
-                      <p>@{a.username}</p>
-                      {a.displayName && <p className="text-xs text-muted-foreground">{a.displayName}</p>}
-                    </div>
-                  ),
+                  cell: (a) => <span>@{a.username}</span>,
                 },
                 { key: 'status', header: 'Status', cell: (a) => <StatusBadge status={a.status} /> },
                 {
                   key: 'actions',
-                  header: 'Actions',
+                  header: '',
                   className: 'text-right',
                   cell: (a) => (
                     <Button variant="ghost" size="sm" onClick={() => disconnect(a.id)}>
-                      <Unlink className="h-4 w-4" /> Disconnect
+                      Disconnect
                     </Button>
                   ),
                 },
@@ -302,77 +454,162 @@ function SocialContent() {
             sortDir={accountList.sortDir}
             onSort={accountList.toggleSort}
             rowKey={(a) => a.id}
-            emptyMessage="No accounts match filters"
+            emptyMessage="No matches"
           />
         </>
       )}
 
-      <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-xs text-muted-foreground space-y-2">
-        <p className="font-medium text-foreground">Meta (Instagram / Facebook)</p>
-        <p>
-          Register these redirect URIs in{' '}
-          <a
-            className="text-violet-400 underline"
-            href="https://developers.facebook.com/apps/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Meta Developer Console
-          </a>
-          :
-        </p>
-        <ul className="list-inside list-disc font-mono text-[11px]">
-          <li>http://localhost:8081/api/v1/social/oauth/callback/instagram</li>
-          <li>http://localhost:8081/api/v1/social/oauth/callback/facebook</li>
-        </ul>
-        <p className="font-medium text-foreground pt-2">Google (login + YouTube)</p>
-        <p>
-          Same OAuth Web client as Firebase. Add <strong>all</strong> redirect URIs (login uses Firebase handler):
-        </p>
-        <ul className="list-inside list-disc font-mono text-[11px] break-all">
-          <li>https://autobot-founder.firebaseapp.com/__/auth/handler</li>
-          <li>http://localhost:8081/api/v1/social/oauth/callback/youtube</li>
-        </ul>
-        <p>JavaScript origins: http://localhost:3001, https://autobot-founder.firebaseapp.com</p>
-        <p>Instagram requires a Business/Creator account linked to a Facebook Page.</p>
-        <p className="font-medium text-foreground pt-2">TikTok</p>
-        <p>
-          <a className="text-violet-400 underline" href="https://developers.tiktok.com/" target="_blank" rel="noreferrer">
-            TikTok for Developers
-          </a>{' '}
-          → Login Kit redirect URI:
-        </p>
-        <ul className="list-inside list-disc font-mono text-[11px]">
-          <li>http://localhost:8081/api/v1/social/oauth/callback/tiktok</li>
-        </ul>
-        <p className="font-medium text-foreground pt-2">LinkedIn</p>
-        <p>
-          <a className="text-violet-400 underline" href="https://www.linkedin.com/developers/apps" target="_blank" rel="noreferrer">
-            LinkedIn Developers
-          </a>{' '}
-          → create app → Auth → add redirect URL and enable{' '}
-          <strong>Sign In with LinkedIn using OpenID Connect</strong> + <strong>Share on LinkedIn</strong>:
-        </p>
-        <ul className="list-inside list-disc font-mono text-[11px]">
-          <li>http://localhost:8081/api/v1/social/oauth/callback/linkedin</li>
-        </ul>
-        <p className="text-[11px]">
-          Set <span className="font-mono">LINKEDIN_CLIENT_ID</span> and{' '}
-          <span className="font-mono">LINKEDIN_CLIENT_SECRET</span> in <span className="font-mono">services/api/.env</span>, then restart the API.
-        </p>
-      </div>
+      <Modal open={whatsappOpen} onClose={() => setWhatsappOpen(false)} title="Connect WhatsApp">
+        <form onSubmit={(e) => void submitWhatsAppConnect(e)} className="space-y-4">
+          <div>
+            <Label htmlFor="wa-token">Access token</Label>
+            <Input
+              id="wa-token"
+              type="password"
+              value={whatsappToken}
+              onChange={(e) => setWhatsappToken(e.target.value)}
+              className="mt-1 font-mono text-sm"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="wa-phone-id">Phone number ID</Label>
+            <Input
+              id="wa-phone-id"
+              value={whatsappPhoneId}
+              onChange={(e) => setWhatsappPhoneId(e.target.value)}
+              className="mt-1 font-mono text-sm"
+              required
+            />
+          </div>
+          <Button type="submit" className="w-full" loading={connecting === 'whatsapp'}>
+            Connect
+          </Button>
+        </form>
+      </Modal>
+
+      <Modal open={whatsappSettingsOpen} onClose={() => setWhatsappSettingsOpen(false)} title="WhatsApp settings">
+        <form onSubmit={(e) => void saveWhatsAppSettings(e)} className="space-y-3">
+          <div>
+            <Label htmlFor="wa-product">Product (buy replies)</Label>
+            <select
+              id="wa-product"
+              value={waDefaultProductId}
+              onChange={(e) => setWaDefaultProductId(e.target.value)}
+              className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm"
+            >
+              <option value="">Latest product</option>
+              {products.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label htmlFor="wa-recipients">Publish to (phones)</Label>
+            <Input
+              id="wa-recipients"
+              value={waPublishRecipients}
+              onChange={(e) => setWaPublishRecipients(e.target.value)}
+              placeholder="9876543210, 9123456789"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="wa-notify">Your phone (order alerts)</Label>
+            <Input
+              id="wa-notify"
+              value={waNotifyPhone}
+              onChange={(e) => setWaNotifyPhone(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={waAutoReplyEnabled}
+              onChange={(e) => setWaAutoReplyEnabled(e.target.checked)}
+            />
+            Buy auto-reply
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={waAlertsEnabled}
+              onChange={(e) => setWaAlertsEnabled(e.target.checked)}
+            />
+            Order alerts
+          </label>
+          <Button type="submit" className="w-full" loading={waSaving}>
+            Save
+          </Button>
+        </form>
+      </Modal>
+
+      <Modal
+        open={Boolean(metaPendingId)}
+        onClose={() => {
+          setMetaPendingId(null);
+          setMetaPages([]);
+        }}
+        title="Select page"
+      >
+        {metaPagesLoading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : (
+          <ul className="space-y-2">
+            {metaPages.map((p) => (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-left text-sm hover:bg-white/10"
+                  disabled={connecting !== null}
+                  onClick={() => void completeMetaPage(p.id)}
+                >
+                  {p.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Modal>
+
+      <Modal
+        open={Boolean(googlePendingId)}
+        onClose={() => {
+          setGooglePendingId(null);
+          setGoogleAccounts([]);
+        }}
+        title="Select Google Business"
+      >
+        {googleAccountsLoading ? (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ) : (
+          <ul className="space-y-2">
+            {googleAccounts.map((a) => (
+              <li key={a.name}>
+                <button
+                  type="button"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-left text-sm hover:bg-white/10"
+                  disabled={connecting !== null}
+                  onClick={() => void completeGoogleBusinessAccount(a.name)}
+                >
+                  {a.accountName}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Modal>
     </motion.div>
   );
 }
 
 export default function SocialPage() {
   return (
-    <Suspense fallback={<SocialPageFallback />}>
+    <Suspense fallback={<div className="glass-card h-40 animate-pulse" />}>
       <SocialContent />
     </Suspense>
   );
-}
-
-function SocialPageFallback() {
-  return <div className="glass-card h-40 animate-pulse" />;
 }

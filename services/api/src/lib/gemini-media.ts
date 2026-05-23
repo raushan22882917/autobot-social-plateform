@@ -10,11 +10,11 @@ function getApiKey(): string {
 }
 
 function imageModel(): string {
-  return process.env.GEMINI_IMAGE_MODEL || 'gemini-2.5-flash-image';
+  return process.env.GEMINI_IMAGE_MODEL || 'gemini-3-pro-image-preview';
 }
 
 function veoModel(): string {
-  return process.env.GEMINI_VEO_MODEL || 'veo-2.0-generate-001';
+  return process.env.GEMINI_VEO_MODEL || 'veo-3.1-generate-preview';
 }
 
 type GeminiPart = {

@@ -3,6 +3,31 @@ import type { CloudEvent } from '@autobot360/shared';
 
 const eventLog: CloudEvent[] = [];
 
+/** GCP Pub/Sub is opt-in — local dev uses in-process handlers (no topics required). */
+export function isGcpPubSubEnabled(): boolean {
+  return (
+    process.env.PUBSUB_ENABLED === 'true' &&
+    Boolean(process.env.GCP_PROJECT_ID) &&
+    process.env.USE_DEV_STORE !== 'true'
+  );
+}
+
+function pubsubErrorMessage(err: unknown): string {
+  if (err && typeof err === 'object' && 'details' in err && typeof (err as { details?: string }).details === 'string') {
+    return (err as { details: string }).details;
+  }
+  return err instanceof Error ? err.message : String(err);
+}
+
+async function runLocalPublishRequestedHandler(payload: {
+  scheduledPostId?: string;
+  scheduledAt?: string;
+}): Promise<void> {
+  if (!payload?.scheduledPostId) return;
+  const { enqueueScheduledPost } = await import('../agents/publish/publish-executor');
+  await enqueueScheduledPost(payload.scheduledPostId, payload.scheduledAt || new Date().toISOString());
+}
+
 export async function publishEvent<T>(
   topicName: string,
   event: Omit<CloudEvent<T>, 'eventId' | 'version' | 'timestamp'> & { payload: T }
@@ -20,8 +45,7 @@ export async function publishEvent<T>(
     metadata: event.metadata,
   };
 
-  // Log events in dev; wire to GCP Pub/Sub in production
-  if (process.env.GCP_PROJECT_ID && process.env.USE_DEV_STORE !== 'true') {
+  if (isGcpPubSubEnabled()) {
     try {
       const { PubSub } = await import('@google-cloud/pubsub');
       const pubsub = new PubSub({ projectId: process.env.GCP_PROJECT_ID });
@@ -31,7 +55,16 @@ export async function publishEvent<T>(
       });
       return messageId;
     } catch (err) {
-      console.warn('Pub/Sub publish failed, logging locally:', err);
+      const code = (err as { code?: number }).code;
+      const msg = pubsubErrorMessage(err);
+      if (code === 5) {
+        console.warn(
+          `[pubsub] Topic "${topicName}" not found in GCP — using in-process handler. ` +
+            'Create the topic in Cloud Pub/Sub or set PUBSUB_ENABLED=false in services/api/.env.'
+        );
+      } else {
+        console.warn(`[pubsub] Publish to "${topicName}" failed — using in-process handler: ${msg}`);
+      }
     }
   }
 
@@ -40,37 +73,11 @@ export async function publishEvent<T>(
     console.log(`[event] ${topicName}`, fullEvent.eventType, fullEvent.tenantId);
   }
 
-  // n8n automation is optional — when disabled, publish via direct API
-  if (process.env.DISABLE_N8N_AUTO_DISPATCH === 'true') {
-    if (fullEvent.eventType === 'publish.requested') {
-      const payload = fullEvent.payload as { scheduledPostId?: string; scheduledAt?: string };
-      if (payload?.scheduledPostId) {
-        import('../agents/publish/publish-executor')
-          .then(({ enqueueScheduledPost }) =>
-            enqueueScheduledPost(
-              payload.scheduledPostId!,
-              payload.scheduledAt || new Date().toISOString()
-            )
-          )
-          .catch((err) => console.warn('[publish] enqueue failed:', err));
-      }
-    }
-    return fullEvent.eventId;
-  }
-
-  const workflowMap: Record<string, string> = {
-    'publish.requested': 'publish-product',
-    'comment.received': 'comment-monitoring',
-    'payment.success': 'razorpay-payment',
-    'order.created': 'order-creation',
-    'token.expiring': 'token-refresh',
-    'analytics.sync': 'analytics-sync',
-  };
-  const workflow = workflowMap[fullEvent.eventType];
-  if (workflow && fullEvent.tenantId) {
-    import('../agents/orchestration/n8n-service')
-      .then(({ dispatchToN8n }) => dispatchToN8n(fullEvent.tenantId, workflow, fullEvent as unknown as Record<string, unknown>))
-      .catch((err) => console.warn('[n8n] dispatch skipped:', err));
+  if (fullEvent.eventType === 'publish.requested') {
+    const payload = fullEvent.payload as { scheduledPostId?: string; scheduledAt?: string };
+    void runLocalPublishRequestedHandler(payload).catch((err) =>
+      console.warn('[publish] enqueue failed:', err instanceof Error ? err.message : err)
+    );
   }
 
   return fullEvent.eventId;

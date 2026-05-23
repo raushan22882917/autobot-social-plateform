@@ -145,7 +145,7 @@ function PaymentsContent() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4"
         >
-          <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
+          <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-brand-whatsapp" />
           <motion.div>
             <p className="text-sm font-medium text-emerald-200">Payments ready</p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -181,8 +181,8 @@ function PaymentsContent() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <motion.div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/20">
-                      <CreditCard className="h-6 w-6 text-violet-400" />
+                    <motion.div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-instagram/15">
+                      <CreditCard className="h-6 w-6 text-brand-instagram" />
                     </motion.div>
                     <div>
                       <p className="font-semibold">{gw.name}</p>
@@ -192,7 +192,7 @@ function PaymentsContent() {
                   <span
                     className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                       gw.status === 'active'
-                        ? 'bg-emerald-500/20 text-emerald-400'
+                        ? 'bg-emerald-500/20 text-brand-whatsapp'
                         : 'bg-gray-500/20 text-gray-400'
                     }`}
                   >
@@ -268,7 +268,7 @@ function PaymentsContent() {
 
       <motion.div className="glass rounded-xl border border-white/10 p-6">
         <h3 className="flex items-center gap-2 font-semibold">
-          <Shield className="h-5 w-5 text-violet-400" />
+          <Shield className="h-5 w-5 text-brand-instagram" />
           Setup guide
         </h3>
         <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm text-muted-foreground">
@@ -280,7 +280,7 @@ function PaymentsContent() {
             <code className="rounded bg-black/30 px-1 text-xs">{webhookUrl}</code>
             <button
               type="button"
-              className="ml-2 inline align-middle text-violet-400 hover:text-violet-300"
+              className="ml-2 inline align-middle text-brand-instagram hover:text-brand-instagram"
               onClick={() => copyText(webhookUrl)}
             >
               Copy

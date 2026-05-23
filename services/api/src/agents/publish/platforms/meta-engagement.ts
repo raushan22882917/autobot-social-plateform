@@ -42,6 +42,36 @@ async function graphGet<T>(path: string, accessToken: string): Promise<T> {
   return data;
 }
 
+/** Follow Graph API paging.next to fetch all items (up to maxPages) */
+async function graphGetAllPages<T>(
+  initialPath: string,
+  accessToken: string,
+  maxPages = 40
+): Promise<T[]> {
+  const items: T[] = [];
+  let url: string | null = initialPath.startsWith('http')
+    ? initialPath
+    : initialPath.includes('?')
+      ? `${GRAPH}${initialPath}&access_token=${accessToken}`
+      : `${GRAPH}${initialPath}?access_token=${accessToken}`;
+
+  for (let page = 0; page < maxPages && url; page++) {
+    const res = await fetch(url);
+    const data = (await res.json()) as {
+      data?: T[];
+      paging?: { next?: string };
+      error?: { message: string };
+    };
+    if (!res.ok || data.error) {
+      throw new Error(data.error?.message || `Graph API error (${res.status})`);
+    }
+    if (data.data?.length) items.push(...data.data);
+    url = data.paging?.next || null;
+  }
+
+  return items;
+}
+
 export async function fetchInstagramEngagement(
   mediaId: string,
   creds: SocialCredentials
@@ -67,29 +97,27 @@ export async function fetchInstagramEngagement(
   }
 
   try {
-    const commentRes = await graphGet<{
-      data?: Array<{
-        id: string;
-        text?: string;
-        username?: string;
-        timestamp?: string;
-        like_count?: number;
-        replies?: {
-          data?: Array<{
-            id: string;
-            text?: string;
-            username?: string;
-            timestamp?: string;
-            like_count?: number;
-          }>;
-        };
-      }>;
+    const topLevel = await graphGetAllPages<{
+      id: string;
+      text?: string;
+      username?: string;
+      timestamp?: string;
+      like_count?: number;
+      replies?: {
+        data?: Array<{
+          id: string;
+          text?: string;
+          username?: string;
+          timestamp?: string;
+          like_count?: number;
+        }>;
+      };
     }>(
-      `/${mediaId}/comments?fields=id,text,username,timestamp,like_count,replies{id,text,username,timestamp,like_count}&limit=25`,
+      `/${mediaId}/comments?fields=id,text,username,timestamp,like_count,replies{id,text,username,timestamp,like_count}&limit=100`,
       token
     );
 
-    for (const c of commentRes.data || []) {
+    for (const c of topLevel) {
       comments.push({
         id: c.id,
         text: c.text || '',
@@ -150,29 +178,27 @@ export async function fetchFacebookEngagement(
   }
 
   try {
-    const commentRes = await graphGet<{
-      data?: Array<{
-        id: string;
-        message?: string;
-        from?: { name?: string };
-        created_time?: string;
-        like_count?: number;
-        comments?: {
-          data?: Array<{
-            id: string;
-            message?: string;
-            from?: { name?: string };
-            created_time?: string;
-            like_count?: number;
-          }>;
-        };
-      }>;
+    const topLevel = await graphGetAllPages<{
+      id: string;
+      message?: string;
+      from?: { name?: string };
+      created_time?: string;
+      like_count?: number;
+      comments?: {
+        data?: Array<{
+          id: string;
+          message?: string;
+          from?: { name?: string };
+          created_time?: string;
+          like_count?: number;
+        }>;
+      };
     }>(
-      `/${postId}/comments?fields=id,message,from,created_time,like_count,comments{id,message,from,created_time,like_count}&limit=25`,
+      `/${postId}/comments?fields=id,message,from,created_time,like_count,comments{id,message,from,created_time,like_count}&limit=100`,
       token
     );
 
-    for (const c of commentRes.data || []) {
+    for (const c of topLevel) {
       comments.push({
         id: c.id,
         text: c.message || '',

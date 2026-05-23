@@ -29,13 +29,27 @@ export async function getSocialCredentials(
   const tokenDoc = await db.get('social_tokens', account.id as string);
   if (!tokenDoc?.encryptedAccessToken) return null;
 
-  return {
-    accountId: account.id as string,
-    platform,
-    accessToken: decryptSecret(tokenDoc.encryptedAccessToken as string),
-    refreshToken: tokenDoc.encryptedRefreshToken
-      ? decryptSecret(tokenDoc.encryptedRefreshToken as string)
-      : undefined,
-    metadata: (account.metadata as Record<string, unknown>) || {},
-  };
+  try {
+    const accessToken = decryptSecret(tokenDoc.encryptedAccessToken as string);
+    let refreshToken: string | undefined;
+    if (tokenDoc.encryptedRefreshToken) {
+      try {
+        refreshToken = decryptSecret(tokenDoc.encryptedRefreshToken as string);
+      } catch {
+        refreshToken = undefined;
+      }
+    }
+    return {
+      accountId: account.id as string,
+      platform,
+      accessToken,
+      refreshToken,
+      metadata: (account.metadata as Record<string, unknown>) || {},
+    };
+  } catch {
+    console.warn(
+      `[social] Could not decrypt ${platform} token for tenant ${tenantId} — reconnect the account in Social settings`
+    );
+    return null;
+  }
 }

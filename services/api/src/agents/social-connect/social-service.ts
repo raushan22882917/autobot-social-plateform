@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { db } from '../../lib/db';
 import { encryptSecret } from './token-crypto';
 import type { SocialPlatform } from './config';
+import { completeWhatsAppConnect } from './providers/whatsapp';
 
 export interface SaveSocialAccountInput {
   tenantId: string;
@@ -76,4 +77,14 @@ export async function saveSocialAccount(input: SaveSocialAccountInput) {
   });
 
   return account;
+}
+
+export async function connectWhatsAppAccount(
+  accessToken: string,
+  phoneNumberId: string,
+  businessAccountId: string | undefined,
+  ctx: { tenantId: string; userId: string }
+) {
+  const input = await completeWhatsAppConnect(accessToken, phoneNumberId, businessAccountId, ctx);
+  return saveSocialAccount(input);
 }

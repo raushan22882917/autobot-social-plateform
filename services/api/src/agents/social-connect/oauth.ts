@@ -1,18 +1,17 @@
+import { reloadApiEnv } from '../../lib/env';
 import {
   type SocialPlatform,
   SOCIAL_PLATFORMS,
   isPlatformOAuthReady,
+  isTokenConnectPlatform,
 } from './config';
 import { signOAuthState } from './oauth-state';
 import { buildMetaAuthUrl } from './providers/meta';
 import { buildYouTubeAuthUrl } from './providers/google-youtube';
-import { buildTikTokAuthUrl } from './providers/tiktok';
-import { buildLinkedInAuthUrl } from './providers/linkedin';
+import { buildGoogleBusinessAuthUrl } from './providers/google-business';
 import { completeMetaOAuth } from './providers/meta';
 import { completeYouTubeOAuth } from './providers/google-youtube';
-import { completeTikTokOAuth } from './providers/tiktok';
-import { completeLinkedInOAuth } from './providers/linkedin';
-import type { SaveSocialAccountInput } from './social-service';
+import { completeGoogleBusinessOAuth } from './providers/google-business';
 
 export function assertPlatform(platform: string): SocialPlatform {
   if (!SOCIAL_PLATFORMS.includes(platform as SocialPlatform)) {
@@ -25,6 +24,11 @@ export function buildOAuthUrl(
   platform: SocialPlatform,
   ctx: { tenantId: string; userId: string }
 ): { authUrl: string; state: string } {
+  reloadApiEnv();
+  if (isTokenConnectPlatform(platform)) {
+    throw new Error(`${platform} uses token connect — POST /api/v1/social/connect/${platform}`);
+  }
+
   if (!isPlatformOAuthReady(platform)) {
     throw new Error(
       `${platform} OAuth is not configured. Add the required credentials in services/api/.env`
@@ -39,25 +43,25 @@ export function buildOAuthUrl(
   if (platform === 'youtube') {
     return { authUrl: buildYouTubeAuthUrl(state), state };
   }
-  if (platform === 'linkedin') {
-    return { authUrl: buildLinkedInAuthUrl(state), state };
+  if (platform === 'google_business') {
+    return { authUrl: buildGoogleBusinessAuthUrl(state), state };
   }
-  return { authUrl: buildTikTokAuthUrl(state), state };
+  throw new Error(`OAuth not supported for ${platform}`);
 }
 
 export async function completeOAuth(
   platform: SocialPlatform,
   code: string,
   ctx: { tenantId: string; userId: string }
-): Promise<SaveSocialAccountInput> {
+) {
   if (platform === 'instagram' || platform === 'facebook') {
     return completeMetaOAuth(platform, code, ctx);
   }
   if (platform === 'youtube') {
     return completeYouTubeOAuth(code, ctx);
   }
-  if (platform === 'linkedin') {
-    return completeLinkedInOAuth(code, ctx);
+  if (platform === 'google_business') {
+    return completeGoogleBusinessOAuth(code, ctx);
   }
-  return completeTikTokOAuth(code, ctx);
+  throw new Error(`OAuth not supported for ${platform}`);
 }

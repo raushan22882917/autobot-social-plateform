@@ -81,6 +81,23 @@ function isFirestoreIndexError(err: unknown): boolean {
   return code === 9 || message.includes('FAILED_PRECONDITION') || message.includes('requires an index');
 }
 
+/** Firestore rejects undefined anywhere in nested objects/arrays */
+export function stripUndefinedDeep<T>(value: T): T {
+  if (value === undefined) return value;
+  if (value === null || typeof value !== 'object') return value;
+  if (value instanceof Date) return value;
+  if (Array.isArray(value)) {
+    return value
+      .filter((item) => item !== undefined)
+      .map((item) => stripUndefinedDeep(item)) as T;
+  }
+  const out: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
+    if (val !== undefined) out[key] = stripUndefinedDeep(val);
+  }
+  return out as T;
+}
+
 /** Call at startup to fail fast when Firestore mode is requested without credentials. */
 export async function assertFirestoreReady(): Promise<void> {
   if (isDevStore()) return;
@@ -109,7 +126,10 @@ export const db = {
       memCollection(collection).set(id, payload);
       return;
     }
-    await getFirestore().collection(collection).doc(id).set(data, { merge: true });
+    await getFirestore()
+      .collection(collection)
+      .doc(id)
+      .set(stripUndefinedDeep(data), { merge: true });
   },
 
   async update(collection: string, id: string, data: Partial<DocData>): Promise<void> {
@@ -118,7 +138,7 @@ export const db = {
       memCollection(collection).set(id, { ...existing, ...data, id });
       return;
     }
-    await getFirestore().collection(collection).doc(id).update(data);
+    await getFirestore().collection(collection).doc(id).update(stripUndefinedDeep(data));
   },
 
   async delete(collection: string, id: string): Promise<void> {
