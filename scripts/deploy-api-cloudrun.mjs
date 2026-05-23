@@ -12,6 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
 
 const PROJECT = process.env.GCP_PROJECT_ID || 'autobot-founder';
+// asia-south1 = Mumbai, India
 const REGION = process.env.GCP_REGION || 'asia-south1';
 const SERVICE = process.env.CLOUD_RUN_SERVICE || 'autobot-api';
 const IMAGE = `${REGION}-docker.pkg.dev/${PROJECT}/autobot/${SERVICE}:latest`;
