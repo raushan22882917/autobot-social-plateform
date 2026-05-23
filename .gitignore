@@ -19,6 +19,7 @@ services/api/dist/
 
 # Local overrides
 apps/web/.env.local
+apps/web/.env.vercel-deploy
 apps/web/.env.development.local
 apps/web/.env.production.local
 services/api/.env

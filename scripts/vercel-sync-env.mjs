@@ -5,13 +5,16 @@
  * Requires: vercel login, project linked (run from repo root: vercel link --cwd apps/web)
  */
 import { readFileSync, existsSync } from 'fs';
+// env path resolved below after imports
 import { spawnSync } from 'child_process';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '..');
-const envPath = resolve(root, 'apps/web/.env.local');
+const envPath = existsSync(resolve(root, 'apps/web/.env.vercel-deploy'))
+  ? resolve(root, 'apps/web/.env.vercel-deploy')
+  : resolve(root, 'apps/web/.env.local');
 const dryRun = process.argv.includes('--dry-run');
 
 const ALLOWED_PREFIXES = ['NEXT_PUBLIC_'];

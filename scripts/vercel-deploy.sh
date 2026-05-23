@@ -19,7 +19,9 @@ if [[ ! -f apps/web/.vercel/project.json ]]; then
   vercel link --cwd apps/web --yes
 fi
 
-echo "==> Syncing NEXT_PUBLIC_* env from apps/web/.env.local..."
+echo "==> Preparing Vercel env (API URL + Firebase from api .env)..."
+node scripts/vercel-prepare-env.mjs
+echo "==> Syncing NEXT_PUBLIC_* to Vercel..."
 node scripts/vercel-sync-env.mjs
 
 echo "==> Production deploy..."
