@@ -18,7 +18,9 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "clean": "rm -rf apps/web/.next services/api/dist packages/shared/dist",
     "clean:all": "npm run clean && rm -rf node_modules apps/web/node_modules services/api/node_modules packages/shared/node_modules",
-    "firebase:check": "node scripts/check-firebase-setup.mjs"
+    "firebase:check": "node scripts/check-firebase-setup.mjs",
+    "vercel:env": "node scripts/vercel-sync-env.mjs",
+    "vercel:deploy": "bash scripts/vercel-deploy.sh"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

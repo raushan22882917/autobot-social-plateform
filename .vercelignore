@@ -1,0 +1,15 @@
+.migration-backup
+node_modules
+**/node_modules
+**/.next/cache
+.git
+*.log
+.env
+.env.*
+!**/.env.example
+firebase-service-account.json
+firebase-service-account*.json
+services/api/.env
+apps/web/.env.local
+coverage
+.DS_Store

@@ -336,7 +336,7 @@ export const apiClient = {
 
   getProductAnalysis: (token: string, productId: string) =>
     api<{
-      product: Product & { lastAnalyzedAt?: string };
+      product: Product & { lastAnalyzedAt?: string; lastSyncedAt?: string };
       stats: {
         totalPosts: number;
         publishedPosts: number;
@@ -369,7 +369,14 @@ export const apiClient = {
       }>;
       platformErrors?: Array<{ platform: string; postId?: string; error: string }>;
       automation?: { liveSyncAvailable?: boolean };
-      product?: { lastSyncedAt?: string };
+      sentiment?: {
+        positive: number;
+        neutral: number;
+        negative: number;
+        purchase: number;
+        inquiry: number;
+      };
+      insights?: ProductSavedAnalysis['insights'];
     }>(`/products/${productId}/analysis`, { token }),
 
   analyzeProductComments: (token: string, productId: string, options?: { autoReply?: boolean }) =>
