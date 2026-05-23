@@ -8,14 +8,30 @@ out-tsc/
 apps/web/.next/
 services/api/dist/
 
-# Environment & secrets
+# Environment & secrets (never commit)
 .env
 .env.*
 !.env.example
 !**/.env.example
+
+# Local overrides
 apps/web/.env.local
+apps/web/.env.development.local
+apps/web/.env.production.local
 services/api/.env
+services/api/.env.local
+services/api/.env.production
+
+# Firebase / GCP credentials
 firebase-service-account.json
+firebase-service-account*.json
+*-firebase-adminsdk-*.json
+**/firebase-adminsdk*.json
+*.pem
+*.p12
+*.key
+credentials.json
+service-account*.json
 
 # Logs & debug
 npm-debug.log*
@@ -45,3 +61,6 @@ Thumbs.db
 # Cursor
 .cursor/rules/nx-rules.mdc
 .github/instructions/nx.instructions.md
+
+# Migration backups (may contain old env copies)
+.migration-backup/
