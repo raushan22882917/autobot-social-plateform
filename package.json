@@ -20,7 +20,8 @@
     "clean:all": "npm run clean && rm -rf node_modules apps/web/node_modules services/api/node_modules packages/shared/node_modules",
     "firebase:check": "node scripts/check-firebase-setup.mjs",
     "vercel:env": "node scripts/vercel-sync-env.mjs",
-    "vercel:deploy": "bash scripts/vercel-deploy.sh"
+    "vercel:deploy": "bash scripts/vercel-deploy.sh",
+    "deploy:api": "node scripts/deploy-api-cloudrun.mjs"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",

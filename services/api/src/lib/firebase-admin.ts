@@ -4,6 +4,16 @@ import path from 'path';
 
 let initialized = false;
 
+/** Cloud Run, Cloud Functions, GCE — credentials come from the attached service account. */
+function isGcpManagedRuntime(): boolean {
+  return Boolean(
+    process.env.K_SERVICE ||
+      process.env.K_REVISION ||
+      process.env.FUNCTION_TARGET ||
+      process.env.CLOUD_RUN_JOB
+  );
+}
+
 function resolveCredPath(): string | undefined {
   const credPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
   return credPath ? path.resolve(credPath) : undefined;
@@ -28,6 +38,7 @@ export function isFirebaseAdminEnabled(): boolean {
 
   if (process.env.USE_DEV_STORE !== 'true') {
     return (
+      isGcpManagedRuntime() ||
       hasValidServiceAccount() ||
       Boolean(process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.FIREBASE_SERVICE_ACCOUNT_JSON)
     );

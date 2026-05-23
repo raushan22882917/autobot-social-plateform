@@ -60,6 +60,13 @@ app.use(
     origin(origin, callback) {
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
+      // Vercel production + preview deployments
+      if (
+        process.env.NODE_ENV === 'production' &&
+        /^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*\.vercel\.app$/.test(origin)
+      ) {
+        return callback(null, true);
+      }
       // Dev: allow any localhost port (e.g. 3001 when 3000 is taken)
       if (process.env.NODE_ENV !== 'production' && /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
         return callback(null, true);
